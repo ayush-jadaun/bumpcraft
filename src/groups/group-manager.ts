@@ -21,6 +21,7 @@ export class GroupManager {
       throw new Error(`Group "${name}" already exists`)
     } catch (e: unknown) {
       if (e instanceof Error && e.message.includes('already exists')) throw e
+      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e
     }
     const group: ReleaseGroup = { name, createdAt: new Date().toISOString(), commits: [] }
     await writeFile(this.filePath(name), JSON.stringify(group, null, 2), 'utf-8')

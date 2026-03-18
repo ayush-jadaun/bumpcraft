@@ -71,6 +71,10 @@ export class SemVer {
         const bNum = /^\d+$/.test(bParts[i]) ? parseInt(bParts[i], 10) : NaN
         if (!isNaN(aNum) && !isNaN(bNum)) {
           if (aNum !== bNum) return aNum - bNum
+        } else if (!isNaN(aNum)) {
+          return -1 // numeric < alphanumeric (semver spec §11.4.1)
+        } else if (!isNaN(bNum)) {
+          return 1  // alphanumeric > numeric
         } else {
           const cmp = aParts[i].localeCompare(bParts[i])
           if (cmp !== 0) return cmp

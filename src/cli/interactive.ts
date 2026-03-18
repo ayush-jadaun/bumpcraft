@@ -34,7 +34,10 @@ export async function openInEditor(content: string): Promise<string> {
     const child = spawn(editor, [tmpPath], { stdio: 'inherit' })
     child.on('exit', code => code === 0 ? resolve() : reject(new Error(`Editor exited with ${code}`)))
   })
-  const edited = await readFile(tmpPath, 'utf-8')
-  await unlink(tmpPath)
-  return edited
+  try {
+    const edited = await readFile(tmpPath, 'utf-8')
+    return edited
+  } finally {
+    await unlink(tmpPath).catch(() => { /* best-effort cleanup */ })
+  }
 }

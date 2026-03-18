@@ -52,8 +52,7 @@ export const githubPlugin: BumpcraftPlugin = {
           return { ...context, releaseResult: { url: existing.html_url, id: String(existing.id) } }
         }
       }
-      context.logger.error(`GitHub release failed: ${res.status} ${res.statusText}`)
-      return context
+      throw new Error(`GitHub release failed: ${res.status} ${res.statusText}`)
     }
 
     const data = await res.json() as { html_url: string; id: number }

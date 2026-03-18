@@ -40,6 +40,10 @@ export function registerGroup(program: Command) {
     if (!group.commits.length) { console.log(`Group "${name}" has no commits`); return }
     const { runReleaseWithCommits } = await import('../../index.js')
     const result = await runReleaseWithCommits(group.commits, { dryRun: false })
+    if (result.bumpType === 'none' || !result.nextVersion) {
+      console.log(`Group "${name}" commits produced no releasable changes. Group preserved.`)
+      return
+    }
     console.log(`Released group "${name}" as ${result.nextVersion}`)
     await manager.delete(name)
   })

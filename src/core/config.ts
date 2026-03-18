@@ -43,8 +43,11 @@ export async function loadConfig(configPath: string): Promise<BumpcraftConfig> {
   try {
     const content = await readFile(configPath, 'utf-8')
     raw = JSON.parse(content)
-  } catch {
-    // file not found or unreadable — use defaults
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
+      throw new BumpcraftError(ErrorCode.CONFIG_ERROR, `Failed to read config "${configPath}": ${e}`)
+    }
+    // file not found — use defaults
   }
 
   const pluginOptions: Record<string, Record<string, unknown>> = {}

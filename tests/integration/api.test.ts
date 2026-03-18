@@ -13,11 +13,11 @@ describe('GET /api/health', () => {
 })
 
 describe('POST /api/release without API key', () => {
-  it('returns 403', async () => {
+  it('returns 401', async () => {
     const res = await request(app)
       .post('/api/release')
       .send({ dryRun: true })
-    expect(res.status).toBe(403)
+    expect(res.status).toBe(401)
   })
 })
 

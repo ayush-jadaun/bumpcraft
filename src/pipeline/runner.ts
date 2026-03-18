@@ -18,7 +18,7 @@ export class PipelineRunner {
     let ctx = context
 
     for (const stage of STAGE_ORDER) {
-      if (stage === 'changelog' && ctx.bumpType === 'none') break
+      if (stage === 'changelog' && ctx.bumpType === 'none') continue
       if ((stage === 'release' || stage === 'notify') && ctx.dryRun) continue
 
       const plugins = this.pluginsByStage.get(stage) ?? []

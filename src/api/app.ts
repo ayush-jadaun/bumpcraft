@@ -22,13 +22,14 @@ export function createApp() {
     app.use(authMiddleware)
   }
 
+  let dashboardHtml: string | null = null
+  try {
+    dashboardHtml = readFileSync(join(__dirname, '../dashboard/index.html'), 'utf-8')
+  } catch { /* dashboard not built */ }
+
   app.get('/dashboard', (_req, res) => {
-    try {
-      const html = readFileSync(join(__dirname, '../dashboard/index.html'), 'utf-8')
-      res.send(html)
-    } catch {
-      res.status(404).send('Dashboard not found')
-    }
+    if (!dashboardHtml) return res.status(404).send('Dashboard not found')
+    res.send(dashboardHtml)
   })
 
   app.use('/api/health', healthRouter)

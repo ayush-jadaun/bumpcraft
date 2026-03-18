@@ -21,6 +21,8 @@ export interface HistoryQuery {
 }
 
 export class HistoryStore {
+  private writeLock: Promise<void> = Promise.resolve()
+
   constructor(private readonly path: string) {}
 
   async getAll(): Promise<HistoryEntry[]> {
@@ -33,6 +35,12 @@ export class HistoryStore {
   }
 
   async save(entry: HistoryEntry): Promise<void> {
+    // Serialize writes to prevent concurrent read-modify-write corruption
+    this.writeLock = this.writeLock.then(() => this._doSave(entry))
+    return this.writeLock
+  }
+
+  private async _doSave(entry: HistoryEntry): Promise<void> {
     const entries = await this.getAll()
     entries.unshift(entry)
     await mkdir(dirname(this.path), { recursive: true })
@@ -53,7 +61,8 @@ export class HistoryStore {
 
     if (q.since) {
       const sinceIdx = entries.findIndex(e => e.version === q.since)
-      entries = entries.slice(0, sinceIdx === -1 ? entries.length : sinceIdx)
+      if (sinceIdx === -1) return []
+      entries = entries.slice(0, sinceIdx)
     }
 
     if (q.breaking) {

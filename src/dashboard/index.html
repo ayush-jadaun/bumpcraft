@@ -53,8 +53,14 @@
 
         if (previewRes.success && previewRes.data?.bumpType !== 'none') {
           const { bumpType, nextVersion } = previewRes.data
-          document.getElementById('preview').innerHTML =
-            `Next: <strong>${nextVersion}</strong> <span class="badge ${bumpType}">${bumpType}</span>`
+          const preview = document.getElementById('preview')
+          preview.textContent = 'Next: '
+          const strong = document.createElement('strong')
+          strong.textContent = nextVersion
+          const badge = document.createElement('span')
+          badge.className = `badge ${['major','minor','patch'].includes(bumpType) ? bumpType : 'none'}`
+          badge.textContent = bumpType
+          preview.append(strong, ' ', badge)
           document.getElementById('release-btn').disabled = false
         } else {
           document.getElementById('preview').textContent = 'No release needed.'
@@ -63,7 +69,12 @@
         document.getElementById('changelog').textContent =
           clRes.data?.changelogOutput ?? 'No changelog entries yet.'
       } catch (e) {
-        document.getElementById('preview').innerHTML = `<span class="error">Error: ${e.message}</span>`
+        const el = document.getElementById('preview')
+        el.textContent = ''
+        const span = document.createElement('span')
+        span.className = 'error'
+        span.textContent = `Error: ${e.message}`
+        el.appendChild(span)
       }
     }
 

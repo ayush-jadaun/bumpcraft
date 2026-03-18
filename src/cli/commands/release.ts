@@ -72,7 +72,9 @@ export function registerRelease(program: Command) {
 
       const result = await runRelease({
         preRelease: opts.preRelease,
-        forceBump: opts.forceBump,
+        // Lock in the policy-checked bump type to prevent race conditions
+        // between the dry-run check and the actual release
+        forceBump: opts.forceBump ?? preview.bumpType,
         from: opts.from,
         verbose: opts.verbose,
         overrideChangelog
