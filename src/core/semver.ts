@@ -60,6 +60,23 @@ export class SemVer {
     if (this.patch !== other.patch) return this.patch - other.patch
     if (this.preRelease && !other.preRelease) return -1
     if (!this.preRelease && other.preRelease) return 1
+    if (this.preRelease && other.preRelease) {
+      const aParts = this.preRelease.split('.')
+      const bParts = other.preRelease.split('.')
+      const len = Math.max(aParts.length, bParts.length)
+      for (let i = 0; i < len; i++) {
+        if (i >= aParts.length) return -1
+        if (i >= bParts.length) return 1
+        const aNum = /^\d+$/.test(aParts[i]) ? parseInt(aParts[i], 10) : NaN
+        const bNum = /^\d+$/.test(bParts[i]) ? parseInt(bParts[i], 10) : NaN
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+          if (aNum !== bNum) return aNum - bNum
+        } else {
+          const cmp = aParts[i].localeCompare(bParts[i])
+          if (cmp !== 0) return cmp
+        }
+      }
+    }
     return 0
   }
 }

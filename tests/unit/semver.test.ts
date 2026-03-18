@@ -47,6 +47,18 @@ describe('SemVer comparisons', () => {
   it('eq returns true when equal', () => {
     expect(SemVer.parse('1.2.3').eq(SemVer.parse('1.2.3'))).toBe(true)
   })
+
+  it('pre-release alpha.1 < alpha.2', () => {
+    expect(SemVer.parse('1.0.0-alpha.1').lt(SemVer.parse('1.0.0-alpha.2'))).toBe(true)
+  })
+
+  it('pre-release alpha < beta', () => {
+    expect(SemVer.parse('1.0.0-alpha').lt(SemVer.parse('1.0.0-beta'))).toBe(true)
+  })
+
+  it('pre-release versions are not equal when tags differ', () => {
+    expect(SemVer.parse('1.0.0-alpha.1').eq(SemVer.parse('1.0.0-alpha.2'))).toBe(false)
+  })
 })
 
 describe('SemVer bumps', () => {

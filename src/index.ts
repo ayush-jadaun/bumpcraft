@@ -42,11 +42,30 @@ export async function runRelease(options: ReleaseOptions = {}) {
   const versionSource = createVersionSource(config.versionSource)
   const currentVersion = await versionSource.read()
 
+  // Branch strategy
+  try {
+    const currentBranch = await git.getCurrentBranch()
+    const isReleaseBranch = config.branches.release.includes(currentBranch)
+    const preReleaseTag = config.branches.preRelease[currentBranch]
+
+    // If on a pre-release branch and no explicit --pre-release flag, use the configured tag
+    if (preReleaseTag && !options.preRelease) {
+      options = { ...options, preRelease: preReleaseTag }
+    }
+
+    // If on an unrecognized branch and no force-bump, return early
+    if (!isReleaseBranch && !preReleaseTag && !options.forceBump) {
+      return { bumpType: 'none' as BumpType, currentVersion: currentVersion.toString(), nextVersion: null, changelogOutput: null, releaseResult: null, dryRun: options.dryRun ?? false }
+    }
+  } catch {
+    // Not a git repo or other git error — skip branch strategy
+  }
+
   const latestTag = await git.getLatestTag()
   const ref = options.from ?? latestTag
   const rawCommits = options._rawCommitsOverride ?? await git.getCommitsSince(ref)
 
-  if (!rawCommits.length) {
+  if (!rawCommits.length && !options.forceBump) {
     return { bumpType: 'none' as BumpType, currentVersion: currentVersion.toString(), nextVersion: null, changelogOutput: null, releaseResult: null, dryRun: options.dryRun ?? false }
   }
 
@@ -73,26 +92,23 @@ export async function runRelease(options: ReleaseOptions = {}) {
     name: 'bumpcraft-internal-next-version',
     stage: 'resolve' as const,
     async execute(c: PipelineContext): Promise<PipelineContext> {
-      if (c.bumpType === 'none') return c
+      const effectiveBump = options.forceBump as BumpType | undefined ?? (c.bumpType === 'none' ? undefined : c.bumpType)
+      if (!effectiveBump || effectiveBump === 'none') return c
+
       let next = currentVersion
-      if (options.forceBump) {
-        next = options.forceBump === 'major' ? currentVersion.bumpMajor()
-          : options.forceBump === 'minor' ? currentVersion.bumpMinor()
-          : currentVersion.bumpPatch()
-      } else {
-        next = c.bumpType === 'major' ? currentVersion.bumpMajor()
-          : c.bumpType === 'minor' ? currentVersion.bumpMinor()
-          : currentVersion.bumpPatch()
-      }
+      if (effectiveBump === 'major') next = currentVersion.bumpMajor()
+      else if (effectiveBump === 'minor') next = currentVersion.bumpMinor()
+      else next = currentVersion.bumpPatch()
+
       if (options.preRelease) next = next.bumpPreRelease(options.preRelease)
-      return { ...c, nextVersion: next }
+      return { ...c, bumpType: effectiveBump as BumpType, nextVersion: next }
     }
   }
 
   const runner = new PipelineRunner([...plugins, nextVersionPlugin])
   ctx = await runner.run(ctx)
 
-  if (ctx.bumpType === 'none') {
+  if (ctx.bumpType === 'none' && !options.forceBump) {
     return { bumpType: 'none' as BumpType, currentVersion: currentVersion.toString(), nextVersion: null, changelogOutput: null, releaseResult: null, dryRun: options.dryRun ?? false }
   }
 
