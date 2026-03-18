@@ -1,0 +1,39 @@
+{
+  "name": "bumpcraft",
+  "version": "1.0.0",
+  "description": "A pluggable semantic versioning engine",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/cli/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "start": "node dist/api/server.js",
+    "lint": "tsc --noEmit"
+  },
+  "bin": {
+    "bumpcraft": "./dist/cli/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^14.0.3",
+    "express": "^5.2.1",
+    "inquirer": "^13.3.2",
+    "simple-git": "^3.33.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/inquirer": "^9.0.9",
+    "@types/node": "^25.5.0",
+    "@types/supertest": "^7.2.0",
+    "supertest": "^7.2.2",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  }
+}
