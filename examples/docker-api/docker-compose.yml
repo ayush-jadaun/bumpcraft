@@ -1,0 +1,44 @@
+# Production Docker deployment with nginx reverse proxy and HTTPS.
+#
+# Setup:
+#   1. Replace YOUR_DOMAIN with your actual domain
+#   2. Set environment variables in .env file
+#   3. Place SSL certs in ./certs/ (or use Let's Encrypt)
+#   4. Run: docker compose up -d
+#
+# The API is available at https://YOUR_DOMAIN/api/*
+# The dashboard is at https://YOUR_DOMAIN/dashboard
+
+version: '3.8'
+
+services:
+  bumpcraft-api:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - BUMPCRAFT_API_KEY=${BUMPCRAFT_API_KEY}
+      - BUMPCRAFT_AUTH_ALL=true
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+      - GITHUB_REPOSITORY=${GITHUB_REPOSITORY:-}
+      - PORT=3000
+    volumes:
+      - workspace:/app/workspace
+    expose:
+      - "3000"
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - bumpcraft-api
+
+volumes:
+  workspace:

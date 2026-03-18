@@ -1,0 +1,42 @@
+# .gitlab-ci.yml
+#
+# Automated release in GitLab CI/CD.
+#
+# Setup:
+#   1. Copy this file to .gitlab-ci.yml in your repo
+#   2. Run `npx bumpcraft init`
+#   3. Set CI/CD variable GITLAB_TOKEN with api scope (Settings > CI/CD > Variables)
+#   4. Push to main
+
+stages:
+  - test
+  - release
+
+test:
+  stage: test
+  image: node:20-alpine
+  script:
+    - npm ci
+    - npm test
+
+release:
+  stage: release
+  image: node:20-alpine
+  only:
+    - main
+  before_script:
+    - apk add --no-cache git
+    - git config user.name "GitLab CI"
+    - git config user.email "ci@gitlab.com"
+    - npm ci
+  script:
+    # Check if there's anything to release
+    - npx bumpcraft validate || exit 0
+
+    # Release
+    - npx bumpcraft release --approve
+
+    # Push version bump and tags back to repo
+    - git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+    - git push origin HEAD:main
+    - git push origin --tags
