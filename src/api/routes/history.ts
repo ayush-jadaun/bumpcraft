@@ -2,6 +2,10 @@ import { Router } from 'express'
 import { HistoryStore } from '../../history/history-store.js'
 import { join } from 'path'
 
+function queryString(val: unknown): string | undefined {
+  return typeof val === 'string' ? val : undefined
+}
+
 export const historyRouter = Router()
 
 historyRouter.get('/', async (req, res) => {
@@ -19,11 +23,11 @@ historyRouter.get('/', async (req, res) => {
     const store = new HistoryStore(join('.bumpcraft', 'history.json'))
     const entries = await store.query({
       breaking: req.query.breaking === 'true',
-      scope: req.query.scope as string | undefined,
-      type: req.query.type as string | undefined,
-      since: req.query.since as string | undefined,
-      from: req.query.from as string | undefined,
-      to: req.query.to as string | undefined,
+      scope: queryString(req.query.scope),
+      type: queryString(req.query.type),
+      since: queryString(req.query.since),
+      from: queryString(req.query.from),
+      to: queryString(req.query.to),
       last
     })
     res.json({ success: true, data: { entries }, error: null })
