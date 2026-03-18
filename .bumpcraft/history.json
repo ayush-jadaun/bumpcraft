@@ -1,0 +1,172 @@
+[
+  {
+    "version": "1.0.1",
+    "previousVersion": "1.0.0",
+    "date": "2026-03-18T08:53:09.986Z",
+    "commits": [
+      {
+        "hash": "3bff2b7382d3b42f81041f7e1882126f2681d3a3",
+        "type": "chore",
+        "scope": null,
+        "subject": "set up package.json for npm publishing, add MIT license",
+        "body": null,
+        "breaking": false,
+        "raw": "3bff2b7382d3b42f81041f7e1882126f2681d3a3 chore: set up package.json for npm publishing, add MIT license"
+      },
+      {
+        "hash": "1d9c5317b1d8761220639dd023792584d96cd782",
+        "type": "docs",
+        "scope": null,
+        "subject": "add deployment guide, update docker.md and README",
+        "body": null,
+        "breaking": false,
+        "raw": "1d9c5317b1d8761220639dd023792584d96cd782 docs: add deployment guide, update docker.md and README"
+      },
+      {
+        "hash": "f1c43f189087bd4155a2a9094303fdb4b88e001b",
+        "type": "fix",
+        "scope": null,
+        "subject": "address seventh-round audit — dashboard build + query param safety",
+        "body": "- I1: build script now copies src/dashboard/index.html to dist/ after\n  tsc, so the dashboard actually exists in production/Docker deployments\n  instead of silently returning 404\n- I2: changelog and history API routes use queryString() helper to safely\n  extract string-only query params; duplicate/array params are ignored\n  instead of being unsafely cast to string",
+        "breaking": false,
+        "raw": "f1c43f189087bd4155a2a9094303fdb4b88e001b fix: address seventh-round audit — dashboard build + query param safety\n- I1: build script now copies src/dashboard/index.html to dist/ after\n  tsc, so the dashboard actually exists in production/Docker deployments\n  instead of silently returning 404\n- I2: changelog and history API routes use queryString() helper to safely\n  extract string-only query params; duplicate/array params are ignored\n  instead of being unsafely cast to string"
+      },
+      {
+        "hash": "e8e6cf93e47bca662f088984deb75539f523e2a9",
+        "type": "fix",
+        "scope": null,
+        "subject": "address sixth-round audit — last two stragglers",
+        "body": "- I1: validate command's inline action handler now wrapped in try/catch\n  matching all other CLI commands (was the only one missed in round 5)\n- I2: docker-compose.yml passes GITHUB_TOKEN and GITHUB_REPOSITORY into\n  the container environment so the GitHub release plugin actually fires",
+        "breaking": false,
+        "raw": "e8e6cf93e47bca662f088984deb75539f523e2a9 fix: address sixth-round audit — last two stragglers\n- I1: validate command's inline action handler now wrapped in try/catch\n  matching all other CLI commands (was the only one missed in round 5)\n- I2: docker-compose.yml passes GITHUB_TOKEN and GITHUB_REPOSITORY into\n  the container environment so the GitHub release plugin actually fires"
+      },
+      {
+        "hash": "8a39921cfdd1e5c6b23e1757b48313472609ff58",
+        "type": "fix",
+        "scope": null,
+        "subject": "address fifth-round audit — final hardening",
+        "body": "- I1: github plugin validates repo format against owner/name pattern\n  to prevent SSRF via path traversal in the GitHub API URL\n- I2: all 7 CLI command action handlers wrapped in try/catch with\n  clean error messages and process.exit(1) instead of stack traces\n- I3: --force-bump validates major/minor/patch in CLI; runRelease\n  normalizes forceBump early so invalid values like 'none' are\n  treated as undefined instead of crashing with internal error\n- M1: Dockerfile adds non-root user (bumpcraft) via USER directive\n- M2: Dockerfile uses --omit=dev instead of deprecated --only=production\n- M3: Dockerfile adds HEALTHCHECK for orchestrator liveness detection",
+        "breaking": false,
+        "raw": "8a39921cfdd1e5c6b23e1757b48313472609ff58 fix: address fifth-round audit — final hardening\n- I1: github plugin validates repo format against owner/name pattern\n  to prevent SSRF via path traversal in the GitHub API URL\n- I2: all 7 CLI command action handlers wrapped in try/catch with\n  clean error messages and process.exit(1) instead of stack traces\n- I3: --force-bump validates major/minor/patch in CLI; runRelease\n  normalizes forceBump early so invalid values like 'none' are\n  treated as undefined instead of crashing with internal error\n- M1: Dockerfile adds non-root user (bumpcraft) via USER directive\n- M2: Dockerfile uses --omit=dev instead of deprecated --only=production\n- M3: Dockerfile adds HEALTHCHECK for orchestrator liveness detection"
+      },
+      {
+        "hash": "22cc5ebecbccada97dd4e450a88749656d86804d",
+        "type": "fix",
+        "scope": null,
+        "subject": "address fourth-round audit — all remaining issues resolved",
+        "body": "CRITICAL:\n- C1: HistoryStore.writeLock now uses separate chain so a rejected save\n  doesn't poison future saves; error still surfaces to the failing caller\n- C2: git log uses --format=%H %s%n%b%x00 with NUL separator so commit\n  bodies are fetched; BREAKING CHANGE: in footers now correctly triggers\n  major bumps end-to-end (added integration test to prove it)\n- C3: HistoryStore.getAll validates JSON.parse result is an array;\n  corrupted history files no longer crash all callers with TypeError\n\nIMPORTANT:\n- I1: github plugin guards nextVersion null before use; preRelease check\n  now uses non-optional access after the guard\n- I2: HistoryStore.query returns [] when from/to version not found\n  instead of silently returning the full history\n- I3: API key comparison uses crypto.timingSafeEqual to prevent\n  timing side-channel attacks\n- I4: GroupManager validates group names against /^[a-zA-Z0-9_-]+$/\n  in all public methods to prevent path traversal\n- I5: freezeAfter validated by Zod refine — invalid day names now\n  throw CONFIG_ERROR instead of silently disabling the freeze\n- I6: PackageJsonSource.write is now atomic via tmp + rename\n\nMINOR:\n- M2: HistoryStore.query tests added for since, from/to, last, and\n  combined filters including not-found cases\n- M3: inquirer removed from dependencies (never imported anywhere)\n- M4: policy test description corrected (null = unlimited, not 0)\n- M5: CLI --last validates positive integer; exits 1 with clear message\n- M6: GroupManager.delete and path-traversal rejection now tested\n- M7: api.test.ts cleans up BUMPCRAFT_API_KEY in afterEach\n- M8: integration test uses vi.resetModules() in beforeEach for\n  proper ESM module isolation between tests",
+        "breaking": true,
+        "raw": "22cc5ebecbccada97dd4e450a88749656d86804d fix: address fourth-round audit — all remaining issues resolved\nCRITICAL:\n- C1: HistoryStore.writeLock now uses separate chain so a rejected save\n  doesn't poison future saves; error still surfaces to the failing caller\n- C2: git log uses --format=%H %s%n%b%x00 with NUL separator so commit\n  bodies are fetched; BREAKING CHANGE: in footers now correctly triggers\n  major bumps end-to-end (added integration test to prove it)\n- C3: HistoryStore.getAll validates JSON.parse result is an array;\n  corrupted history files no longer crash all callers with TypeError\n\nIMPORTANT:\n- I1: github plugin guards nextVersion null before use; preRelease check\n  now uses non-optional access after the guard\n- I2: HistoryStore.query returns [] when from/to version not found\n  instead of silently returning the full history\n- I3: API key comparison uses crypto.timingSafeEqual to prevent\n  timing side-channel attacks\n- I4: GroupManager validates group names against /^[a-zA-Z0-9_-]+$/\n  in all public methods to prevent path traversal\n- I5: freezeAfter validated by Zod refine — invalid day names now\n  throw CONFIG_ERROR instead of silently disabling the freeze\n- I6: PackageJsonSource.write is now atomic via tmp + rename\n\nMINOR:\n- M2: HistoryStore.query tests added for since, from/to, last, and\n  combined filters including not-found cases\n- M3: inquirer removed from dependencies (never imported anywhere)\n- M4: policy test description corrected (null = unlimited, not 0)\n- M5: CLI --last validates positive integer; exits 1 with clear message\n- M6: GroupManager.delete and path-traversal rejection now tested\n- M7: api.test.ts cleans up BUMPCRAFT_API_KEY in afterEach\n- M8: integration test uses vi.resetModules() in beforeEach for\n  proper ESM module isolation between tests"
+      },
+      {
+        "hash": "d662b0b90ef6cf4e87631050c66e3d54b1fc1b3e",
+        "type": "fix",
+        "scope": null,
+        "subject": "address third-round audit issues (N1-N9, N11-N14)",
+        "body": "- N1: bumpPreRelease guards against NaN counter (non-numeric suffix like\n  beta.rc no longer produces beta.NaN)\n- N2: HistoryStore.query applies since filter on full list before from/to\n  slicing so version lookups are accurate when filters are combined\n- N3: validateReleaseBody rejects non-object bodies (string/array/null)\n  to prevent validation bypass on malformed JSON payloads\n- N4: GroupManager.delete wraps unlink; ENOENT is silently ignored,\n  other errors surface with a descriptive message\n- N5: interactive.ts defaults to vi on non-Windows; release command\n  catches editor failures and continues without edits\n- N6: HistoryStore atomic write via tmp file + rename to prevent\n  partial-write from permanently wiping history on crash\n- N7: changelog CLI exits with code 2 when no changes found, matching\n  the validate command and enabling scripted pipeline detection\n- N8: GET /api/history validates that last is a positive integer,\n  returns 400 for non-numeric or negative values\n- N9: changelogJsonPlugin falls back to 'unknown' for nextVersion so\n  the version key is never silently dropped from JSON history entries\n- N11: SemVer._compare uses > / < (ASCII) instead of localeCompare for\n  semver spec §11.4.4 compliance\n- N12: GroupManager.list uses slice(0,-5) for safe .json suffix removal\n- N13: server.ts error handler gives a user-friendly message on EADDRINUSE\n- N14: integration test uses git init -b main to work regardless of\n  the user's init.defaultBranch git config",
+        "breaking": false,
+        "raw": "d662b0b90ef6cf4e87631050c66e3d54b1fc1b3e fix: address third-round audit issues (N1-N9, N11-N14)\n- N1: bumpPreRelease guards against NaN counter (non-numeric suffix like\n  beta.rc no longer produces beta.NaN)\n- N2: HistoryStore.query applies since filter on full list before from/to\n  slicing so version lookups are accurate when filters are combined\n- N3: validateReleaseBody rejects non-object bodies (string/array/null)\n  to prevent validation bypass on malformed JSON payloads\n- N4: GroupManager.delete wraps unlink; ENOENT is silently ignored,\n  other errors surface with a descriptive message\n- N5: interactive.ts defaults to vi on non-Windows; release command\n  catches editor failures and continues without edits\n- N6: HistoryStore atomic write via tmp file + rename to prevent\n  partial-write from permanently wiping history on crash\n- N7: changelog CLI exits with code 2 when no changes found, matching\n  the validate command and enabling scripted pipeline detection\n- N8: GET /api/history validates that last is a positive integer,\n  returns 400 for non-numeric or negative values\n- N9: changelogJsonPlugin falls back to 'unknown' for nextVersion so\n  the version key is never silently dropped from JSON history entries\n- N11: SemVer._compare uses > / < (ASCII) instead of localeCompare for\n  semver spec §11.4.4 compliance\n- N12: GroupManager.list uses slice(0,-5) for safe .json suffix removal\n- N13: server.ts error handler gives a user-friendly message on EADDRINUSE\n- N14: integration test uses git init -b main to work regardless of\n  the user's init.defaultBranch git config"
+      },
+      {
+        "hash": "9cca77ae0d982f7e1a980be82b9ab3a4e4095b5e",
+        "type": "fix",
+        "scope": null,
+        "subject": "address second-round audit issues (C1-C3, I1-I9 + minor fixes)",
+        "body": "- C1: HistoryStore.save serializes writes via a promise chain to prevent\n  concurrent read-modify-write corruption\n- C2: GroupManager.create re-throws non-ENOENT errors instead of silently\n  overwriting group data on permission errors or corrupt files\n- C3: config.ts only suppresses ENOENT; SyntaxError in JSON config now\n  throws BumpcraftError(CONFIG_ERROR) instead of falling back to defaults\n- I1: PipelineRunner uses continue instead of break at changelog stage so\n  release/notify stages still run when a resolve plugin sets nextVersion\n- I2: CLI release command locks in the policy-checked bumpType for the\n  actual release call to prevent race-condition over/under-bumping\n- I3: GitHub plugin throws on non-422 API failures (propagates via\n  PipelineRunner error isolation) instead of silently returning\n- I4: authMiddleware uses 401 for missing key (no env var name leakage),\n  403 only for wrong key; generic error messages throughout\n- I5: HistoryStore.query returns empty array when since version not found\n  instead of returning all entries\n- I6: group release preserves group when commits produce no releasable bump\n- I7: SemVer._compare correctly handles numeric-vs-alphanumeric pre-release\n  identifiers per semver spec §11.4.1\n- I8: dashboard HTML cached at app startup (readFileSync once) instead of\n  blocking the event loop on every request\n- I9: dashboard uses textContent/createElement instead of innerHTML to\n  prevent XSS via API response values\n- Minor: openInEditor cleans up temp file in finally block",
+        "breaking": false,
+        "raw": "9cca77ae0d982f7e1a980be82b9ab3a4e4095b5e fix: address second-round audit issues (C1-C3, I1-I9 + minor fixes)\n- C1: HistoryStore.save serializes writes via a promise chain to prevent\n  concurrent read-modify-write corruption\n- C2: GroupManager.create re-throws non-ENOENT errors instead of silently\n  overwriting group data on permission errors or corrupt files\n- C3: config.ts only suppresses ENOENT; SyntaxError in JSON config now\n  throws BumpcraftError(CONFIG_ERROR) instead of falling back to defaults\n- I1: PipelineRunner uses continue instead of break at changelog stage so\n  release/notify stages still run when a resolve plugin sets nextVersion\n- I2: CLI release command locks in the policy-checked bumpType for the\n  actual release call to prevent race-condition over/under-bumping\n- I3: GitHub plugin throws on non-422 API failures (propagates via\n  PipelineRunner error isolation) instead of silently returning\n- I4: authMiddleware uses 401 for missing key (no env var name leakage),\n  403 only for wrong key; generic error messages throughout\n- I5: HistoryStore.query returns empty array when since version not found\n  instead of returning all entries\n- I6: group release preserves group when commits produce no releasable bump\n- I7: SemVer._compare correctly handles numeric-vs-alphanumeric pre-release\n  identifiers per semver spec §11.4.1\n- I8: dashboard HTML cached at app startup (readFileSync once) instead of\n  blocking the event loop on every request\n- I9: dashboard uses textContent/createElement instead of innerHTML to\n  prevent XSS via API response values\n- Minor: openInEditor cleans up temp file in finally block"
+      },
+      {
+        "hash": "da086ab4ad9c5432d7b84550948f9a2fdd8973d9",
+        "type": "fix",
+        "scope": null,
+        "subject": "address important audit issues (I1/I2/I3/I5/I6/I7/I10)",
+        "body": "- I1: wrap PackageJsonSource.write() in try/catch with BumpcraftError\n- I2: enforce maxBumpPerDay in PolicyEngine.check(bumpType, todayCount)\n  and compute today's release count in the CLI before checking\n- I3: add requiresConfirmation to PolicyResult based on autoRelease list;\n  CLI auto-enables interactive mode when bumpType not in autoRelease\n- I5: freezeAfter now blocks 1–2 days after freeze day (covers weekend)\n- I6: GitHub plugin handles 422 by fetching the existing release\n- I7: getCommitsSince uses git.raw(['log', range, '--format=%H %s'])\n  for reliable output instead of simple-git's structured log parser\n- I10: validate preRelease/forceBump/from on POST /api/release and\n  /api/release/dry-run, returning 400 on invalid input",
+        "breaking": false,
+        "raw": "da086ab4ad9c5432d7b84550948f9a2fdd8973d9 fix: address important audit issues (I1/I2/I3/I5/I6/I7/I10)\n- I1: wrap PackageJsonSource.write() in try/catch with BumpcraftError\n- I2: enforce maxBumpPerDay in PolicyEngine.check(bumpType, todayCount)\n  and compute today's release count in the CLI before checking\n- I3: add requiresConfirmation to PolicyResult based on autoRelease list;\n  CLI auto-enables interactive mode when bumpType not in autoRelease\n- I5: freezeAfter now blocks 1–2 days after freeze day (covers weekend)\n- I6: GitHub plugin handles 422 by fetching the existing release\n- I7: getCommitsSince uses git.raw(['log', range, '--format=%H %s'])\n  for reliable output instead of simple-git's structured log parser\n- I10: validate preRelease/forceBump/from on POST /api/release and\n  /api/release/dry-run, returning 400 on invalid input"
+      },
+      {
+        "hash": "ca2b42ec0a628ae5291a3fa6425e0ed5893e386b",
+        "type": "fix",
+        "scope": null,
+        "subject": "resolve critical audit issues (SemVer comparison, forceBump, branch strategy)",
+        "body": null,
+        "breaking": false,
+        "raw": "ca2b42ec0a628ae5291a3fa6425e0ed5893e386b fix: resolve critical audit issues (SemVer comparison, forceBump, branch strategy)"
+      },
+      {
+        "hash": "7cbabc7bf48aba8ff53c2acd9edaa7011e273b77",
+        "type": "docs",
+        "scope": null,
+        "subject": "add comprehensive documentation",
+        "body": "README, installation, CLI reference, configuration, API reference,\nplugin development guide, library API, release groups, release policies,\nhistory & querying, dashboard, Docker deployment, and architecture docs.",
+        "breaking": false,
+        "raw": "7cbabc7bf48aba8ff53c2acd9edaa7011e273b77 docs: add comprehensive documentation\nREADME, installation, CLI reference, configuration, API reference,\nplugin development guide, library API, release groups, release policies,\nhistory & querying, dashboard, Docker deployment, and architecture docs."
+      },
+      {
+        "hash": "7843af46fc1ed029b330c9bf8072cf4666170813",
+        "type": "chore",
+        "scope": null,
+        "subject": "add CI/CD workflow (disabled, manual trigger only)",
+        "body": null,
+        "breaking": false,
+        "raw": "7843af46fc1ed029b330c9bf8072cf4666170813 chore: add CI/CD workflow (disabled, manual trigger only)"
+      },
+      {
+        "hash": "b19b589d0feac0d0ec3273e3c3f48107c2405c2c",
+        "type": "feat",
+        "scope": null,
+        "subject": "add integration tests and Docker setup",
+        "body": "Adds full-pipeline integration test against a temp git repo, Dockerfile and docker-compose for the API, and fixes Zod v4 / simple-git TypeScript compatibility (z.record now requires 2 args, object .default() requires factory, simpleGit changed to named import).",
+        "breaking": false,
+        "raw": "b19b589d0feac0d0ec3273e3c3f48107c2405c2c feat: add integration tests and Docker setup\nAdds full-pipeline integration test against a temp git repo, Dockerfile and docker-compose for the API, and fixes Zod v4 / simple-git TypeScript compatibility (z.record now requires 2 args, object .default() requires factory, simpleGit changed to named import)."
+      },
+      {
+        "hash": "77fb922adddbd75cef5593f07a366a29da8b6ff1",
+        "type": "feat",
+        "scope": null,
+        "subject": "add REST API, CLI, library API, and release dashboard",
+        "body": null,
+        "breaking": false,
+        "raw": "77fb922adddbd75cef5593f07a366a29da8b6ff1 feat: add REST API, CLI, library API, and release dashboard"
+      },
+      {
+        "hash": "c062f9b3b591900fbf0f0fe397fc06240c1a281c",
+        "type": "feat",
+        "scope": null,
+        "subject": "add plugins, policy engine, history store, and release groups",
+        "body": null,
+        "breaking": false,
+        "raw": "c062f9b3b591900fbf0f0fe397fc06240c1a281c feat: add plugins, policy engine, history store, and release groups"
+      },
+      {
+        "hash": "26f8e64e24ff6af70a283871665096506bed37e2",
+        "type": "feat",
+        "scope": null,
+        "subject": "add GitClient, VersionSource, and PipelineRunner",
+        "body": null,
+        "breaking": false,
+        "raw": "26f8e64e24ff6af70a283871665096506bed37e2 feat: add GitClient, VersionSource, and PipelineRunner"
+      },
+      {
+        "hash": "005634b18e06c63ac02ca26a512dc9902d90fd67",
+        "type": "feat",
+        "scope": null,
+        "subject": "add core library (errors, logger, SemVer, config, BumpResolver, pipeline types)",
+        "body": null,
+        "breaking": false,
+        "raw": "005634b18e06c63ac02ca26a512dc9902d90fd67 feat: add core library (errors, logger, SemVer, config, BumpResolver, pipeline types)"
+      },
+      {
+        "hash": "d904af9927ce3c824c529169bdbb68cb7260e24a",
+        "type": "feat",
+        "scope": null,
+        "subject": "scaffold bumpcraft project structure",
+        "body": "Initialize bumpcraft as an ESM TypeScript project with npm, configure\nTypeScript (NodeNext modules), Vitest for testing, and set up all source\nand test directory trees for the pluggable semver engine.",
+        "breaking": false,
+        "raw": "d904af9927ce3c824c529169bdbb68cb7260e24a feat: scaffold bumpcraft project structure\nInitialize bumpcraft as an ESM TypeScript project with npm, configure\nTypeScript (NodeNext modules), Vitest for testing, and set up all source\nand test directory trees for the pluggable semver engine."
+      }
+    ],
+    "changelogOutput": "## 1.0.1 (2026-03-18)\n\n### Documentation\n\n- add deployment guide, update docker.md and README ([1d9c531])\n- add comprehensive documentation ([7cbabc7])\n\n### Bug Fixes\n\n- address seventh-round audit — dashboard build + query param safety ([f1c43f1])\n- address sixth-round audit — last two stragglers ([e8e6cf9])\n- address fifth-round audit — final hardening ([8a39921])\n- address fourth-round audit — all remaining issues resolved BREAKING ([22cc5eb])\n- address third-round audit issues (N1-N9, N11-N14) ([d662b0b])\n- address second-round audit issues (C1-C3, I1-I9 + minor fixes) ([9cca77a])\n- address important audit issues (I1/I2/I3/I5/I6/I7/I10) ([da086ab])\n- resolve critical audit issues (SemVer comparison, forceBump, branch strategy) ([ca2b42e])\n\n### Features\n\n- add integration tests and Docker setup ([b19b589])\n- add REST API, CLI, library API, and release dashboard ([77fb922])\n- add plugins, policy engine, history store, and release groups ([c062f9b])\n- add GitClient, VersionSource, and PipelineRunner ([26f8e64])\n- add core library (errors, logger, SemVer, config, BumpResolver, pipeline types) ([005634b])\n- scaffold bumpcraft project structure ([d904af9])\n"
+  }
+]
