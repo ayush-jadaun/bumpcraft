@@ -1,5 +1,22 @@
 [
   {
+    "version": "1.0.3",
+    "previousVersion": "1.0.2",
+    "date": "2026-03-18T15:58:37.312Z",
+    "commits": [
+      {
+        "hash": "409600a0668d275c2e4b071e5b67d029950f7814",
+        "type": "config",
+        "scope": null,
+        "subject": "add github plugin to release pipeline",
+        "body": null,
+        "breaking": false,
+        "raw": "409600a0668d275c2e4b071e5b67d029950f7814 config: add github plugin to release pipeline"
+      }
+    ],
+    "changelogOutput": "## 1.0.3 (2026-03-18)\n\n### config\n\n- add github plugin to release pipeline ([409600a])\n"
+  },
+  {
     "version": "1.0.2",
     "previousVersion": "1.0.1",
     "date": "2026-03-18T08:56:44.103Z",
