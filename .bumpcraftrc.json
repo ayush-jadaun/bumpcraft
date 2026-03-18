@@ -2,7 +2,8 @@
   "versionSource": "package.json",
   "plugins": [
     "bumpcraft-plugin-conventional-commits",
-    "bumpcraft-plugin-changelog-md"
+    "bumpcraft-plugin-changelog-md",
+    "bumpcraft-plugin-github"
   ],
   "branches": {
     "release": ["main", "master"],
