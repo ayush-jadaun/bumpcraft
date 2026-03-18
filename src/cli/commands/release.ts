@@ -3,7 +3,9 @@ import { runRelease } from '../../index.js'
 import { confirmRelease, openInEditor } from '../interactive.js'
 import { PolicyEngine } from '../../policies/policy-engine.js'
 import { loadConfig } from '../../core/config.js'
+import { HistoryStore } from '../../history/history-store.js'
 import type { BumpType } from '../../pipeline/types.js'
+import { join } from 'path'
 
 export function registerRelease(program: Command) {
   program
@@ -33,7 +35,13 @@ export function registerRelease(program: Command) {
         process.exit(2)
       }
 
-      const policy = engine.check(preview.bumpType as BumpType)
+      // Compute today's release count for maxBumpPerDay enforcement
+      const store = new HistoryStore(join('.bumpcraft', 'history.json'))
+      const allEntries = await store.getAll()
+      const today = new Date().toDateString()
+      const todayReleaseCount = allEntries.filter(e => new Date(e.date).toDateString() === today).length
+
+      const policy = engine.check(preview.bumpType as BumpType, todayReleaseCount)
       if (!policy.allowed && !opts.approve) {
         console.error(`Release blocked: ${policy.reason}`)
         process.exit(1)
@@ -45,8 +53,11 @@ export function registerRelease(program: Command) {
         return
       }
 
+      // autoRelease: if not in autoRelease list, require confirmation (unless --approve or -i already set)
+      const forceInteractive = opts.interactive || (policy.requiresConfirmation && !opts.approve)
+
       let overrideChangelog: string | undefined
-      if (opts.interactive) {
+      if (forceInteractive) {
         const answer = await confirmRelease(
           preview.bumpType,
           preview.nextVersion!,

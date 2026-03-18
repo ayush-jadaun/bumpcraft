@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import request from 'supertest'
 import { createApp } from '../../src/api/app.js'
 
@@ -18,5 +18,40 @@ describe('POST /api/release without API key', () => {
       .post('/api/release')
       .send({ dryRun: true })
     expect(res.status).toBe(403)
+  })
+})
+
+describe('POST /api/release input validation', () => {
+  const apiKey = 'test-key'
+
+  beforeEach(() => {
+    process.env.BUMPCRAFT_API_KEY = apiKey
+  })
+
+  it('returns 400 when forceBump is invalid', async () => {
+    const res = await request(app)
+      .post('/api/release')
+      .set('X-API-Key', apiKey)
+      .send({ forceBump: 'invalid' })
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/forceBump/i)
+  })
+
+  it('returns 400 when preRelease is not a string', async () => {
+    const res = await request(app)
+      .post('/api/release')
+      .set('X-API-Key', apiKey)
+      .send({ preRelease: 123 })
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/preRelease/i)
+  })
+
+  it('returns 400 when from is not a string', async () => {
+    const res = await request(app)
+      .post('/api/release')
+      .set('X-API-Key', apiKey)
+      .send({ from: true })
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/from/i)
   })
 })

@@ -21,14 +21,15 @@ export const githubPlugin: BumpcraftPlugin = {
 
     const version = context.nextVersion?.toString()
     const body = context.changelogOutput ?? ''
+    const headers = {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'User-Agent': 'bumpcraft'
+    }
 
     const res = await fetch(`https://api.github.com/repos/${repo}/releases`, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'User-Agent': 'bumpcraft'
-      },
+      headers,
       body: JSON.stringify({
         tag_name: `v${version}`,
         name: `v${version}`,
@@ -39,6 +40,18 @@ export const githubPlugin: BumpcraftPlugin = {
     })
 
     if (!res.ok) {
+      if (res.status === 422) {
+        // Release may already exist for this tag — try to fetch it
+        const existingRes = await fetch(
+          `https://api.github.com/repos/${repo}/releases/tags/v${version}`,
+          { headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'bumpcraft' } }
+        )
+        if (existingRes.ok) {
+          const existing = await existingRes.json() as { html_url: string; id: number }
+          context.logger.warn(`GitHub release v${version} already exists`)
+          return { ...context, releaseResult: { url: existing.html_url, id: String(existing.id) } }
+        }
+      }
       context.logger.error(`GitHub release failed: ${res.status} ${res.statusText}`)
       return context
     }

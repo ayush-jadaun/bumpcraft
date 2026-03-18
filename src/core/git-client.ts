@@ -33,8 +33,8 @@ export class GitClient {
   async getCommitsSince(ref: string | null): Promise<string[]> {
     try {
       const range = ref ? `${ref}..HEAD` : 'HEAD'
-      const log = await this.git.log([range, '--format=%H %s%n%b'])
-      return log.all.map(c => c.hash + ' ' + c.message)
+      const output = await this.git.raw(['log', range, '--format=%H %s'])
+      return output.split('\n').filter(line => line.trim())
     } catch (e) {
       throw new BumpcraftError(ErrorCode.GIT_ERROR, `Failed to get commits: ${e}`)
     }

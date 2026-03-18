@@ -22,10 +22,14 @@ export class PackageJsonSource implements VersionSource {
   }
 
   async write(version: SemVer): Promise<void> {
-    const content = await readFile(this.path, 'utf-8')
-    const pkg = JSON.parse(content)
-    pkg.version = version.toString()
-    await writeFile(this.path, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+    try {
+      const content = await readFile(this.path, 'utf-8')
+      const pkg = JSON.parse(content)
+      pkg.version = version.toString()
+      await writeFile(this.path, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+    } catch (e) {
+      throw new BumpcraftError(ErrorCode.CONFIG_ERROR, `Cannot write ${this.path}: ${e}`)
+    }
   }
 }
 
