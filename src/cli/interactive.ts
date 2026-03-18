@@ -29,7 +29,7 @@ export async function openInEditor(content: string): Promise<string> {
   const { join } = await import('path')
   const tmpPath = join(tmpdir(), 'bumpcraft-changelog.md')
   await writeFile(tmpPath, content, 'utf-8')
-  const editor = process.env.EDITOR ?? 'notepad'
+  const editor = process.env.EDITOR ?? (process.platform === 'win32' ? 'notepad' : 'vi')
   await new Promise<void>((resolve, reject) => {
     const child = spawn(editor, [tmpPath], { stdio: 'inherit' })
     child.on('exit', code => code === 0 ? resolve() : reject(new Error(`Editor exited with ${code}`)))

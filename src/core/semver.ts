@@ -49,7 +49,8 @@ export class SemVer {
   bumpPreRelease(tag: string): SemVer {
     if (this.preRelease?.startsWith(`${tag}.`)) {
       const counter = parseInt(this.preRelease.split('.').pop() ?? '0', 10)
-      return new SemVer(this.major, this.minor, this.patch, `${tag}.${counter + 1}`)
+      const next = isNaN(counter) ? 1 : counter + 1
+      return new SemVer(this.major, this.minor, this.patch, `${tag}.${next}`)
     }
     return new SemVer(this.major, this.minor, this.patch, `${tag}.1`)
   }
@@ -76,8 +77,8 @@ export class SemVer {
         } else if (!isNaN(bNum)) {
           return 1  // alphanumeric > numeric
         } else {
-          const cmp = aParts[i].localeCompare(bParts[i])
-          if (cmp !== 0) return cmp
+          if (aParts[i] > bParts[i]) return 1
+          if (aParts[i] < bParts[i]) return -1
         }
       }
     }

@@ -7,7 +7,7 @@ export const changelogJsonPlugin: BumpcraftPlugin = {
     if (context.changelogOutput) return context
     const { parsedCommits, nextVersion, currentVersion } = context
     const entry = {
-      version: nextVersion?.toString(),
+      version: nextVersion?.toString() ?? 'unknown',
       previousVersion: currentVersion.toString(),
       date: new Date().toISOString(),
       commits: parsedCommits

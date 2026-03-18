@@ -65,8 +65,13 @@ export function registerRelease(program: Command) {
         )
         if (answer === 'abort') { console.log('Aborted.'); return }
         if (answer === 'edit') {
-          overrideChangelog = await openInEditor(preview.changelogOutput ?? '')
-          console.log('Proceeding with edited changelog...')
+          try {
+            overrideChangelog = await openInEditor(preview.changelogOutput ?? '')
+            console.log('Proceeding with edited changelog...')
+          } catch (e) {
+            console.error(`Editor failed: ${(e as Error).message}. Set $EDITOR to your preferred editor.`)
+            console.log('Proceeding without edits...')
+          }
         }
       }
 

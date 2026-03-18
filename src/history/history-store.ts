@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir } from 'fs/promises'
+import { readFile, writeFile, mkdir, rename } from 'fs/promises'
 import { dirname } from 'path'
 import type { ParsedCommit } from '../pipeline/types.js'
 
@@ -44,11 +44,21 @@ export class HistoryStore {
     const entries = await this.getAll()
     entries.unshift(entry)
     await mkdir(dirname(this.path), { recursive: true })
-    await writeFile(this.path, JSON.stringify(entries, null, 2), 'utf-8')
+    // Atomic write: write to tmp then rename to prevent partial-write corruption
+    const tmp = `${this.path}.tmp`
+    await writeFile(tmp, JSON.stringify(entries, null, 2), 'utf-8')
+    await rename(tmp, this.path)
   }
 
   async query(q: HistoryQuery): Promise<HistoryEntry[]> {
     let entries = await this.getAll()
+
+    // Apply `since` on the full list first so version lookups are accurate
+    if (q.since) {
+      const sinceIdx = entries.findIndex(e => e.version === q.since)
+      if (sinceIdx === -1) return []
+      entries = entries.slice(0, sinceIdx)
+    }
 
     // Entries are stored newest-first. "from" = older version (higher idx), "to" = newer version (lower idx).
     if (q.from || q.to) {
@@ -57,12 +67,6 @@ export class HistoryStore {
       if (fromIdx !== -1 && toIdx !== -1) {
         entries = entries.slice(Math.min(toIdx, fromIdx), Math.max(toIdx, fromIdx) + 1)
       }
-    }
-
-    if (q.since) {
-      const sinceIdx = entries.findIndex(e => e.version === q.since)
-      if (sinceIdx === -1) return []
-      entries = entries.slice(0, sinceIdx)
     }
 
     if (q.breaking) {

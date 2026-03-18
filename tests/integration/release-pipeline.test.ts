@@ -10,7 +10,7 @@ let originalCwd: string
 beforeEach(() => {
   originalCwd = process.cwd()
   dir = mkdtempSync(join(tmpdir(), 'bumpcraft-integration-'))
-  execSync('git init', { cwd: dir })
+  execSync('git init -b main', { cwd: dir })
   execSync('git config user.email "test@test.com"', { cwd: dir })
   execSync('git config user.name "Test"', { cwd: dir })
   writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'test', version: '1.0.0' }))

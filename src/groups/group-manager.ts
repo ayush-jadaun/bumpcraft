@@ -48,7 +48,7 @@ export class GroupManager {
     try {
       const files = await readdir(this.dir)
       const groups = await Promise.all(
-        files.filter(f => f.endsWith('.json')).map(f => this.get(f.replace('.json', '')))
+        files.filter(f => f.endsWith('.json')).map(f => this.get(f.slice(0, -5)))
       )
       return groups.filter((g): g is ReleaseGroup => g !== null)
     } catch {
@@ -57,6 +57,12 @@ export class GroupManager {
   }
 
   async delete(name: string): Promise<void> {
-    await unlink(this.filePath(name))
+    try {
+      await unlink(this.filePath(name))
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== 'ENOENT') {
+        throw new Error(`Failed to delete group "${name}": ${(e as Error).message}`)
+      }
+    }
   }
 }

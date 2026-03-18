@@ -4,6 +4,9 @@ import { authMiddleware } from '../middleware/auth.js'
 const VALID_BUMP_TYPES = ['major', 'minor', 'patch']
 
 function validateReleaseBody(body: Record<string, unknown>): string | null {
+  if (typeof body !== 'object' || Array.isArray(body) || body === null) {
+    return 'Request body must be a JSON object'
+  }
   if (body.preRelease !== undefined && typeof body.preRelease !== 'string') {
     return 'preRelease must be a string'
   }

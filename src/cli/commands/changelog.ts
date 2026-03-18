@@ -12,6 +12,7 @@ export function registerChangelog(program: Command) {
         console.log(result.changelogOutput)
       } else {
         console.log('No changes found.')
+        process.exit(2)
       }
     })
 }
