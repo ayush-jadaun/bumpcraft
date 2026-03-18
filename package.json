@@ -1,9 +1,24 @@
 {
   "name": "bumpcraft",
   "version": "1.0.0",
-  "description": "A pluggable semantic versioning engine",
-  "main": "index.js",
+  "description": "A pluggable semantic versioning engine with changelog generation, release policies, and a web dashboard",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "bin": {
+    "bumpcraft": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc && node -e \"const fs=require('fs');fs.mkdirSync('dist/dashboard',{recursive:true});fs.copyFileSync('src/dashboard/index.html','dist/dashboard/index.html')\"",
     "dev": "tsx src/cli/index.ts",
@@ -11,14 +26,34 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "start": "node dist/api/server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm test"
   },
-  "bin": {
-    "bumpcraft": "./dist/cli/index.js"
+  "keywords": [
+    "semver",
+    "semantic-versioning",
+    "changelog",
+    "release",
+    "version-bump",
+    "conventional-commits",
+    "git",
+    "automation",
+    "ci",
+    "cd"
+  ],
+  "author": "Ayush Jadaun",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayush-jadaun/bumpcraft.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "homepage": "https://github.com/ayush-jadaun/bumpcraft#readme",
+  "bugs": {
+    "url": "https://github.com/ayush-jadaun/bumpcraft/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "commander": "^14.0.3",
     "express": "^5.2.1",
