@@ -14,8 +14,8 @@ export const githubPlugin: BumpcraftPlugin = {
       { repo?: string } | undefined
     const repo = opts?.repo ?? process.env.GITHUB_REPOSITORY
 
-    if (!repo) {
-      context.logger.warn('No repo configured for github plugin — skipping')
+    if (!repo || !/^[a-zA-Z0-9_.\-]+\/[a-zA-Z0-9_.\-]+$/.test(repo)) {
+      context.logger.warn('github plugin: invalid or missing repo — skipping')
       return context
     }
 

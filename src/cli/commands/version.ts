@@ -6,7 +6,12 @@ export function registerVersion(program: Command) {
     .command('version')
     .description('Show current version')
     .action(async () => {
-      const v = await currentVersion()
-      console.log(v)
+      try {
+        const v = await currentVersion()
+        console.log(v)
+      } catch (e) {
+        console.error(`Error: ${(e as Error).message}`)
+        process.exit(1)
+      }
     })
 }

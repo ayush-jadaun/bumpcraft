@@ -7,12 +7,17 @@ export function registerChangelog(program: Command) {
     .description('Generate changelog only (no release)')
     .option('--from <ref>', 'Analyze commits from this ref')
     .action(async (opts) => {
-      const result = await runRelease({ dryRun: true, from: opts.from })
-      if (result.changelogOutput) {
-        console.log(result.changelogOutput)
-      } else {
-        console.log('No changes found.')
-        process.exit(2)
+      try {
+        const result = await runRelease({ dryRun: true, from: opts.from })
+        if (result.changelogOutput) {
+          console.log(result.changelogOutput)
+        } else {
+          console.log('No changes found.')
+          process.exit(2)
+        }
+      } catch (e) {
+        console.error(`Error: ${(e as Error).message}`)
+        process.exit(1)
       }
     })
 }

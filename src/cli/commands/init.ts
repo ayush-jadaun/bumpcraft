@@ -18,8 +18,13 @@ export function registerInit(program: Command) {
         await access('.bumpcraftrc.json')
         console.log('.bumpcraftrc.json already exists')
       } catch {
-        await writeFile('.bumpcraftrc.json', JSON.stringify(DEFAULT_CONFIG, null, 2), 'utf-8')
-        console.log('Created .bumpcraftrc.json')
+        try {
+          await writeFile('.bumpcraftrc.json', JSON.stringify(DEFAULT_CONFIG, null, 2), 'utf-8')
+          console.log('Created .bumpcraftrc.json')
+        } catch (e) {
+          console.error(`Error: ${(e as Error).message}`)
+          process.exit(1)
+        }
       }
     })
 }

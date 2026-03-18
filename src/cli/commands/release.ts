@@ -7,6 +7,8 @@ import { HistoryStore } from '../../history/history-store.js'
 import type { BumpType } from '../../pipeline/types.js'
 import { join } from 'path'
 
+const VALID_BUMPS = ['major', 'minor', 'patch']
+
 export function registerRelease(program: Command) {
   program
     .command('release')
@@ -19,73 +21,83 @@ export function registerRelease(program: Command) {
     .option('--from <ref>', 'Analyze commits from this ref')
     .option('-v, --verbose', 'Verbose output')
     .action(async (opts) => {
-      const config = await loadConfig('.bumpcraftrc.json')
-      const engine = new PolicyEngine(config.policies)
+      try {
+        if (opts.forceBump && !VALID_BUMPS.includes(opts.forceBump)) {
+          console.error(`--force-bump must be one of: ${VALID_BUMPS.join(', ')}`)
+          process.exit(1)
+        }
 
-      const preview = await runRelease({
-        dryRun: true,
-        preRelease: opts.preRelease,
-        forceBump: opts.forceBump,
-        from: opts.from,
-        verbose: opts.verbose
-      })
+        const config = await loadConfig('.bumpcraftrc.json')
+        const engine = new PolicyEngine(config.policies)
 
-      if (preview.bumpType === 'none') {
-        console.log('No release needed.')
-        process.exit(2)
-      }
+        const preview = await runRelease({
+          dryRun: true,
+          preRelease: opts.preRelease,
+          forceBump: opts.forceBump,
+          from: opts.from,
+          verbose: opts.verbose
+        })
 
-      // Compute today's release count for maxBumpPerDay enforcement
-      const store = new HistoryStore(join('.bumpcraft', 'history.json'))
-      const allEntries = await store.getAll()
-      const today = new Date().toDateString()
-      const todayReleaseCount = allEntries.filter(e => new Date(e.date).toDateString() === today).length
+        if (preview.bumpType === 'none') {
+          console.log('No release needed.')
+          process.exit(2)
+        }
 
-      const policy = engine.check(preview.bumpType as BumpType, todayReleaseCount)
-      if (!policy.allowed && !opts.approve) {
-        console.error(`Release blocked: ${policy.reason}`)
-        process.exit(1)
-      }
+        // Compute today's release count for maxBumpPerDay enforcement
+        const store = new HistoryStore(join('.bumpcraft', 'history.json'))
+        const allEntries = await store.getAll()
+        const today = new Date().toDateString()
+        const todayReleaseCount = allEntries.filter(e => new Date(e.date).toDateString() === today).length
 
-      if (opts.dryRun) {
-        console.log(`[dry-run] Would release: ${preview.nextVersion} (${preview.bumpType})`)
-        if (preview.changelogOutput) console.log(preview.changelogOutput)
-        return
-      }
+        const policy = engine.check(preview.bumpType as BumpType, todayReleaseCount)
+        if (!policy.allowed && !opts.approve) {
+          console.error(`Release blocked: ${policy.reason}`)
+          process.exit(1)
+        }
 
-      // autoRelease: if not in autoRelease list, require confirmation (unless --approve or -i already set)
-      const forceInteractive = opts.interactive || (policy.requiresConfirmation && !opts.approve)
+        if (opts.dryRun) {
+          console.log(`[dry-run] Would release: ${preview.nextVersion} (${preview.bumpType})`)
+          if (preview.changelogOutput) console.log(preview.changelogOutput)
+          return
+        }
 
-      let overrideChangelog: string | undefined
-      if (forceInteractive) {
-        const answer = await confirmRelease(
-          preview.bumpType,
-          preview.nextVersion!,
-          preview.changelogOutput ?? ''
-        )
-        if (answer === 'abort') { console.log('Aborted.'); return }
-        if (answer === 'edit') {
-          try {
-            overrideChangelog = await openInEditor(preview.changelogOutput ?? '')
-            console.log('Proceeding with edited changelog...')
-          } catch (e) {
-            console.error(`Editor failed: ${(e as Error).message}. Set $EDITOR to your preferred editor.`)
-            console.log('Proceeding without edits...')
+        // autoRelease: if not in autoRelease list, require confirmation (unless --approve or -i already set)
+        const forceInteractive = opts.interactive || (policy.requiresConfirmation && !opts.approve)
+
+        let overrideChangelog: string | undefined
+        if (forceInteractive) {
+          const answer = await confirmRelease(
+            preview.bumpType,
+            preview.nextVersion!,
+            preview.changelogOutput ?? ''
+          )
+          if (answer === 'abort') { console.log('Aborted.'); return }
+          if (answer === 'edit') {
+            try {
+              overrideChangelog = await openInEditor(preview.changelogOutput ?? '')
+              console.log('Proceeding with edited changelog...')
+            } catch (e) {
+              console.error(`Editor failed: ${(e as Error).message}. Set $EDITOR to your preferred editor.`)
+              console.log('Proceeding without edits...')
+            }
           }
         }
+
+        const result = await runRelease({
+          preRelease: opts.preRelease,
+          // Lock in the policy-checked bump type to prevent race conditions
+          // between the dry-run check and the actual release
+          forceBump: opts.forceBump ?? preview.bumpType,
+          from: opts.from,
+          verbose: opts.verbose,
+          overrideChangelog
+        })
+
+        console.log(`Released: ${result.nextVersion}`)
+        if (result.releaseResult?.url) console.log(`GitHub release: ${result.releaseResult.url}`)
+      } catch (e) {
+        console.error(`Error: ${(e as Error).message}`)
+        process.exit(1)
       }
-
-      const result = await runRelease({
-        preRelease: opts.preRelease,
-        // Lock in the policy-checked bump type to prevent race conditions
-        // between the dry-run check and the actual release
-        forceBump: opts.forceBump ?? preview.bumpType,
-        from: opts.from,
-        verbose: opts.verbose,
-        overrideChangelog
-      })
-
-      console.log(`Released: ${result.nextVersion}`)
-      if (result.releaseResult?.url) console.log(`GitHub release: ${result.releaseResult.url}`)
     })
 }
