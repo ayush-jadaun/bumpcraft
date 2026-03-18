@@ -10,11 +10,18 @@ export interface ReleaseGroup {
 export class GroupManager {
   constructor(private readonly dir: string) {}
 
+  private validateName(name: string): void {
+    if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+      throw new Error(`Invalid group name "${name}": only letters, numbers, hyphens and underscores are allowed`)
+    }
+  }
+
   private filePath(name: string): string {
     return join(this.dir, `${name}.json`)
   }
 
   async create(name: string): Promise<ReleaseGroup> {
+    this.validateName(name)
     await mkdir(this.dir, { recursive: true })
     try {
       await readFile(this.filePath(name))
@@ -29,6 +36,7 @@ export class GroupManager {
   }
 
   async get(name: string): Promise<ReleaseGroup | null> {
+    this.validateName(name)
     try {
       const content = await readFile(this.filePath(name), 'utf-8')
       return JSON.parse(content)
@@ -38,6 +46,7 @@ export class GroupManager {
   }
 
   async addCommits(name: string, commits: string[]): Promise<void> {
+    this.validateName(name)
     const group = await this.get(name)
     if (!group) throw new Error(`Group "${name}" not found`)
     group.commits.push(...commits)
@@ -57,6 +66,7 @@ export class GroupManager {
   }
 
   async delete(name: string): Promise<void> {
+    this.validateName(name)
     try {
       await unlink(this.filePath(name))
     } catch (e) {

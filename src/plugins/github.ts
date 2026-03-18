@@ -19,7 +19,12 @@ export const githubPlugin: BumpcraftPlugin = {
       return context
     }
 
-    const version = context.nextVersion?.toString()
+    if (!context.nextVersion) {
+      context.logger.warn('github plugin: nextVersion is null, skipping')
+      return context
+    }
+
+    const version = context.nextVersion.toString()
     const body = context.changelogOutput ?? ''
     const headers = {
       Authorization: `Bearer ${token}`,
@@ -35,7 +40,7 @@ export const githubPlugin: BumpcraftPlugin = {
         name: `v${version}`,
         body,
         draft: false,
-        prerelease: context.nextVersion?.preRelease !== null
+        prerelease: context.nextVersion.preRelease !== null
       })
     })
 

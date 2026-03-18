@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mkdtempSync, rmSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { execSync } from 'child_process'
@@ -8,6 +8,7 @@ let dir: string
 let originalCwd: string
 
 beforeEach(() => {
+  vi.resetModules()
   originalCwd = process.cwd()
   dir = mkdtempSync(join(tmpdir(), 'bumpcraft-integration-'))
   execSync('git init -b main', { cwd: dir })
@@ -45,5 +46,14 @@ describe('Full release pipeline', () => {
     const result = await runRelease({ dryRun: true })
     expect(result.changelogOutput).toContain('add dark mode')
     expect(result.changelogOutput).toContain('## 1.1.0')
+  })
+
+  it('detects BREAKING CHANGE in commit body and bumps major', async () => {
+    // Commit with BREAKING CHANGE in the body (not just the ! shorthand)
+    execSync('git commit --allow-empty -m "feat: new API" -m "BREAKING CHANGE: old endpoint removed"', { cwd: dir })
+    const { runRelease } = await import('../../src/index.js')
+    const result = await runRelease({ dryRun: true })
+    expect(result.bumpType).toBe('major')
+    expect(result.nextVersion).toBe('2.0.0')
   })
 })

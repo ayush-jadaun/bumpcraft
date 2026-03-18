@@ -41,4 +41,19 @@ describe('GroupManager', () => {
     expect(groups.map(g => g.name)).toContain('group-a')
     expect(groups.map(g => g.name)).toContain('group-b')
   })
+
+  it('deletes a group', async () => {
+    await manager.create('v3-launch')
+    await manager.delete('v3-launch')
+    expect(await manager.get('v3-launch')).toBeNull()
+  })
+
+  it('delete on non-existent group does not throw', async () => {
+    await expect(manager.delete('no-such-group')).resolves.toBeUndefined()
+  })
+
+  it('rejects group names with path traversal characters', async () => {
+    await expect(manager.create('../evil')).rejects.toThrow(/invalid group name/i)
+    await expect(manager.get('../../etc')).rejects.toThrow(/invalid group name/i)
+  })
 })

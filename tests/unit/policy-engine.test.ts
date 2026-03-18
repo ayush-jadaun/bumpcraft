@@ -64,7 +64,7 @@ describe('PolicyEngine', () => {
     expect(result.allowed).toBe(true)
   })
 
-  it('maxBumpPerDay defaults to 0 when not provided', () => {
+  it('allows unlimited releases when maxBumpPerDay is null', () => {
     const engine = new PolicyEngine({ requireApproval: [], autoRelease: [], freezeAfter: null, maxBumpPerDay: null })
     const result = engine.check('patch')
     expect(result.allowed).toBe(true)

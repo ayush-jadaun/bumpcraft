@@ -33,8 +33,10 @@ export class GitClient {
   async getCommitsSince(ref: string | null): Promise<string[]> {
     try {
       const range = ref ? `${ref}..HEAD` : 'HEAD'
-      const output = await this.git.raw(['log', range, '--format=%H %s'])
-      return output.split('\n').filter(line => line.trim())
+      // %H %s = hash + subject; %n%b = body (multi-line); %x00 = NUL separator between commits
+      // NUL cannot appear in commit messages, making it a reliable record separator
+      const output = await this.git.raw(['log', range, '--format=%H %s%n%b%x00'])
+      return output.split('\0').map(s => s.trim()).filter(s => s.length > 0)
     } catch (e) {
       throw new BumpcraftError(ErrorCode.GIT_ERROR, `Failed to get commits: ${e}`)
     }

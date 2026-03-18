@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'fs/promises'
+import { readFile, writeFile, rename } from 'fs/promises'
 import { BumpcraftError, ErrorCode } from './errors.js'
 import { SemVer } from './semver.js'
 import { GitClient } from './git-client.js'
@@ -26,7 +26,10 @@ export class PackageJsonSource implements VersionSource {
       const content = await readFile(this.path, 'utf-8')
       const pkg = JSON.parse(content)
       pkg.version = version.toString()
-      await writeFile(this.path, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+      // Atomic write: tmp then rename prevents partial-write corruption on crash
+      const tmp = `${this.path}.tmp`
+      await writeFile(tmp, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+      await rename(tmp, this.path)
     } catch (e) {
       throw new BumpcraftError(ErrorCode.CONFIG_ERROR, `Cannot write ${this.path}: ${e}`)
     }

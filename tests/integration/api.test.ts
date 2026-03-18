@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import request from 'supertest'
 import { createApp } from '../../src/api/app.js'
 
@@ -24,9 +24,8 @@ describe('POST /api/release without API key', () => {
 describe('POST /api/release input validation', () => {
   const apiKey = 'test-key'
 
-  beforeEach(() => {
-    process.env.BUMPCRAFT_API_KEY = apiKey
-  })
+  beforeEach(() => { process.env.BUMPCRAFT_API_KEY = apiKey })
+  afterEach(() => { delete process.env.BUMPCRAFT_API_KEY })
 
   it('returns 400 when forceBump is invalid', async () => {
     const res = await request(app)

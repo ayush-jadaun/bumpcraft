@@ -22,7 +22,15 @@ export function registerHistory(program: Command) {
         since: opts.since,
         from: opts.from,
         to: opts.to,
-        last: opts.last ? Number(opts.last) : undefined
+        last: (() => {
+          if (!opts.last) return undefined
+          const n = Number(opts.last)
+          if (!Number.isInteger(n) || n <= 0) {
+            console.error('--last must be a positive integer')
+            process.exit(1)
+          }
+          return n
+        })()
       })
       if (!entries.length) {
         console.log('No history found.')

@@ -27,7 +27,12 @@ const ConfigSchema = z.object({
   policies: z.object({
     requireApproval: z.array(z.string()).default([]),
     autoRelease: z.array(z.string()).default(['patch', 'minor', 'major']),
-    freezeAfter: z.string().nullable().default(null),
+    freezeAfter: z.string()
+      .refine(
+        val => /^(sunday|monday|tuesday|wednesday|thursday|friday|saturday)\s+\d{2}:\d{2}$/i.test(val),
+        { message: 'freezeAfter must be "<day> HH:MM" (e.g. "friday 17:00")' }
+      )
+      .nullable().default(null),
     maxBumpPerDay: z.number().nullable().default(null)
   }).default(() => ({ requireApproval: [], autoRelease: ['patch', 'minor', 'major'], freezeAfter: null, maxBumpPerDay: null })),
   pluginOptions: z.record(z.string(), z.record(z.string(), z.unknown())).default({})
