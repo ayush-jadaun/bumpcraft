@@ -43,6 +43,7 @@ npx bumpcraft release
 - [History & Querying](docs/history.md)
 - [Dashboard](docs/dashboard.md)
 - [Docker Deployment](docs/docker.md)
+- [Deployment Guide](docs/deployment.md)
 - [Architecture](docs/architecture.md)
 
 ## How It Works
