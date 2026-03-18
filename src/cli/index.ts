@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+import { Command } from 'commander'
+import { registerRelease } from './commands/release.js'
+import { registerVersion } from './commands/version.js'
+import { registerChangelog } from './commands/changelog.js'
+import { registerInit } from './commands/init.js'
+import { registerPlugins } from './commands/plugins.js'
+import { registerGroup } from './commands/group.js'
+import { registerHistory } from './commands/history.js'
+
+const program = new Command()
+
+program
+  .name('bumpcraft')
+  .description('Pluggable semantic versioning and changelog automation')
+  .version('1.0.0')
+
+registerRelease(program)
+registerVersion(program)
+registerChangelog(program)
+registerInit(program)
+registerPlugins(program)
+registerGroup(program)
+registerHistory(program)
+
+program
+  .command('validate')
+  .description('Preview what a release would do (alias for release --dry-run)')
+  .action(async () => {
+    const { runRelease } = await import('../index.js')
+    const result = await runRelease({ dryRun: true })
+    if (result.bumpType === 'none') {
+      console.log('No release needed.')
+      process.exit(2)
+    }
+    console.log(`Would release: ${result.nextVersion} (${result.bumpType})`)
+    if (result.changelogOutput) console.log(result.changelogOutput)
+  })
+
+program.parse(process.argv)

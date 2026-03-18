@@ -1,0 +1,42 @@
+import express from 'express'
+import { healthRouter } from './routes/health.js'
+import { versionRouter } from './routes/version.js'
+import { changelogRouter } from './routes/changelog.js'
+import { releaseRouter } from './routes/release.js'
+import { pluginsRouter } from './routes/plugins.js'
+import { historyRouter } from './routes/history.js'
+import { authMiddleware } from './middleware/auth.js'
+import { readFileSync } from 'fs'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+
+export function createApp() {
+  const app = express()
+  app.use(express.json())
+
+  // Apply auth to ALL routes when BUMPCRAFT_AUTH_ALL=true
+  if (process.env.BUMPCRAFT_AUTH_ALL === 'true') {
+    app.use(authMiddleware)
+  }
+
+  app.get('/dashboard', (_req, res) => {
+    try {
+      const html = readFileSync(join(__dirname, '../dashboard/index.html'), 'utf-8')
+      res.send(html)
+    } catch {
+      res.status(404).send('Dashboard not found')
+    }
+  })
+
+  app.use('/api/health', healthRouter)
+  app.use('/api/version', versionRouter)
+  app.use('/api/changelog', changelogRouter)
+  app.use('/api/release', releaseRouter)
+  app.use('/api/plugins', pluginsRouter)
+  app.use('/api/history', historyRouter)
+
+  return app
+}

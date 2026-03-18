@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bumpcraft — Release Dashboard</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; background: #0d1117; color: #e6edf3; }
+    h1 { color: #58a6ff; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin: 16px 0; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .major { background: #da3633; } .minor { background: #1f6feb; } .patch { background: #238636; } .none { background: #6e7681; }
+    button { background: #238636; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    button:hover { background: #2ea043; }
+    button:disabled { background: #6e7681; cursor: not-allowed; }
+    pre { background: #0d1117; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 13px; }
+    .error { color: #f85149; }
+  </style>
+</head>
+<body>
+  <h1>&#9889; Bumpcraft Dashboard</h1>
+
+  <div class="card">
+    <h2>Current Version</h2>
+    <div id="current-version">Loading...</div>
+  </div>
+
+  <div class="card">
+    <h2>Next Release Preview</h2>
+    <div id="preview">Loading...</div>
+    <br>
+    <button id="release-btn" disabled>Release Now</button>
+  </div>
+
+  <div class="card">
+    <h2>Latest Changelog</h2>
+    <pre id="changelog">Loading...</pre>
+  </div>
+
+  <script>
+    const apiKey = prompt('Enter API key (leave blank if not set):') ?? ''
+    const headers = { 'Content-Type': 'application/json', 'X-API-Key': apiKey }
+
+    async function load() {
+      try {
+        const [vRes, previewRes, clRes] = await Promise.all([
+          fetch('/api/version').then(r => r.json()),
+          fetch('/api/release/dry-run', { method: 'POST', headers, body: JSON.stringify({}) }).then(r => r.json()),
+          fetch('/api/changelog/latest').then(r => r.json())
+        ])
+
+        document.getElementById('current-version').textContent = vRes.data?.version ?? 'Unknown'
+
+        if (previewRes.success && previewRes.data?.bumpType !== 'none') {
+          const { bumpType, nextVersion } = previewRes.data
+          document.getElementById('preview').innerHTML =
+            `Next: <strong>${nextVersion}</strong> <span class="badge ${bumpType}">${bumpType}</span>`
+          document.getElementById('release-btn').disabled = false
+        } else {
+          document.getElementById('preview').textContent = 'No release needed.'
+        }
+
+        document.getElementById('changelog').textContent =
+          clRes.data?.changelogOutput ?? 'No changelog entries yet.'
+      } catch (e) {
+        document.getElementById('preview').innerHTML = `<span class="error">Error: ${e.message}</span>`
+      }
+    }
+
+    document.getElementById('release-btn').addEventListener('click', async () => {
+      if (!confirm('Trigger a release now?')) return
+      const btn = document.getElementById('release-btn')
+      btn.disabled = true
+      btn.textContent = 'Releasing...'
+      try {
+        const res = await fetch('/api/release', { method: 'POST', headers, body: JSON.stringify({}) })
+        const data = await res.json()
+        if (data.success) {
+          alert(`Released ${data.data.nextVersion}!`)
+          load()
+        } else {
+          alert(`Error: ${data.error}`)
+          btn.disabled = false
+          btn.textContent = 'Release Now'
+        }
+      } catch (e) {
+        alert(`Error: ${e.message}`)
+        btn.disabled = false
+        btn.textContent = 'Release Now'
+      }
+    })
+
+    load()
+  </script>
+</body>
+</html>
