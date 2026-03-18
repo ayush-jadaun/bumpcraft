@@ -1,5 +1,12 @@
 [
   {
+    "version": "1.0.2",
+    "previousVersion": "1.0.1",
+    "date": "2026-03-18T08:56:44.103Z",
+    "commits": [],
+    "changelogOutput": "## 1.0.2 (2026-03-18)\n\n\n"
+  },
+  {
     "version": "1.0.1",
     "previousVersion": "1.0.0",
     "date": "2026-03-18T08:53:09.986Z",
