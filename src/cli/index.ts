@@ -27,14 +27,19 @@ program
   .command('validate')
   .description('Preview what a release would do (alias for release --dry-run)')
   .action(async () => {
-    const { runRelease } = await import('../index.js')
-    const result = await runRelease({ dryRun: true })
-    if (result.bumpType === 'none') {
-      console.log('No release needed.')
-      process.exit(2)
+    try {
+      const { runRelease } = await import('../index.js')
+      const result = await runRelease({ dryRun: true })
+      if (result.bumpType === 'none') {
+        console.log('No release needed.')
+        process.exit(2)
+      }
+      console.log(`Would release: ${result.nextVersion} (${result.bumpType})`)
+      if (result.changelogOutput) console.log(result.changelogOutput)
+    } catch (e) {
+      console.error(`Error: ${(e as Error).message}`)
+      process.exit(1)
     }
-    console.log(`Would release: ${result.nextVersion} (${result.bumpType})`)
-    if (result.changelogOutput) console.log(result.changelogOutput)
   })
 
 program.parse(process.argv)
