@@ -1,4 +1,4 @@
-import simpleGit, { SimpleGit } from 'simple-git'
+import { simpleGit, SimpleGit } from 'simple-git'
 import { BumpcraftError, ErrorCode } from './errors.js'
 import { SemVer } from './semver.js'
 

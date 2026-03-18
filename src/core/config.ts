@@ -4,7 +4,7 @@ import { BumpcraftError, ErrorCode } from './errors.js'
 
 const PluginEntrySchema = z.union([
   z.string(),
-  z.tuple([z.string(), z.record(z.unknown())])
+  z.tuple([z.string(), z.record(z.string(), z.unknown())])
 ])
 
 const ConfigSchema = z.object({
@@ -12,9 +12,9 @@ const ConfigSchema = z.object({
   plugins: z.array(PluginEntrySchema).default([]),
   branches: z.object({
     release: z.array(z.string()).default(['main', 'master']),
-    preRelease: z.record(z.string()).default({})
-  }).default({}),
-  commitTypes: z.record(z.enum(['major', 'minor', 'patch', 'none'])).default({
+    preRelease: z.record(z.string(), z.string()).default({})
+  }).default(() => ({ release: ['main', 'master'], preRelease: {} })),
+  commitTypes: z.record(z.string(), z.enum(['major', 'minor', 'patch', 'none'])).default({
     feat: 'minor',
     fix: 'patch',
     perf: 'patch',
@@ -29,8 +29,8 @@ const ConfigSchema = z.object({
     autoRelease: z.array(z.string()).default(['patch', 'minor', 'major']),
     freezeAfter: z.string().nullable().default(null),
     maxBumpPerDay: z.number().nullable().default(null)
-  }).default({}),
-  pluginOptions: z.record(z.record(z.unknown())).default({})
+  }).default(() => ({ requireApproval: [], autoRelease: ['patch', 'minor', 'major'], freezeAfter: null, maxBumpPerDay: null })),
+  pluginOptions: z.record(z.string(), z.record(z.string(), z.unknown())).default({})
 })
 
 export type BumpcraftConfig = z.infer<typeof ConfigSchema>
