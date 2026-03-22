@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.1.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.1.0...v1.1.1))
+
+### 🐛 Bug Fixes
+
+- CI pipeline — skip bot commits, proper error handling, conditional npm publish ([5e71654](https://github.com/ayush-jadaun/bumpcraft/commit/5e716543bfe9cb87fef24ecbd292e48b41f73acf))
+
 ## [1.1.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.1.0) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.0.3...v1.1.0))
 
 ### 🚀 Features

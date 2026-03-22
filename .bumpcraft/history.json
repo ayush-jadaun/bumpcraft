@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.1.1",
+    "previousVersion": "1.1.0",
+    "date": "2026-03-22T13:54:34.524Z",
+    "commits": [
+      {
+        "hash": "5e716543bfe9cb87fef24ecbd292e48b41f73acf",
+        "type": "fix",
+        "scope": null,
+        "subject": "CI pipeline — skip bot commits, proper error handling, conditional npm publish",
+        "body": "- Skip release job when commit is from the bot (prevents infinite loop)\n- Validate step properly handles exit code 2 (no release) vs errors\n- Uses built dist/cli/index.js instead of npx bumpcraft\n- npm publish only runs if NPM_TOKEN secret is configured",
+        "breaking": false,
+        "raw": "5e716543bfe9cb87fef24ecbd292e48b41f73acf fix: CI pipeline — skip bot commits, proper error handling, conditional npm publish\n- Skip release job when commit is from the bot (prevents infinite loop)\n- Validate step properly handles exit code 2 (no release) vs errors\n- Uses built dist/cli/index.js instead of npx bumpcraft\n- npm publish only runs if NPM_TOKEN secret is configured"
+      },
+      {
+        "hash": "72b80635bd25254e646e1d16e0d1bbd2e18c02f1",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.1.0",
+        "body": null,
+        "breaking": false,
+        "raw": "72b80635bd25254e646e1d16e0d1bbd2e18c02f1 chore(release): 1.1.0"
+      }
+    ],
+    "changelogOutput": "## [1.1.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.1.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.1.0...v1.1.1))\n\n### 🐛 Bug Fixes\n\n- CI pipeline — skip bot commits, proper error handling, conditional npm publish ([5e71654](https://github.com/ayush-jadaun/bumpcraft/commit/5e716543bfe9cb87fef24ecbd292e48b41f73acf))\n"
+  },
+  {
     "version": "1.1.0",
     "previousVersion": "1.0.3",
     "date": "2026-03-22T13:49:25.052Z",
