@@ -49,5 +49,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           npx bumpcraft release --approve
+          git add package.json CHANGELOG.md .bumpcraft/
+          git commit -m "chore(release): $(node -p \"require('./package.json').version\")" || true
           git push
           git push --tags

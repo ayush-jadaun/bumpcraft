@@ -11,6 +11,7 @@ import { changelogJsonPlugin } from './plugins/changelog-json.js'
 import { githubPlugin } from './plugins/github.js'
 import type { PipelineContext, BumpType } from './pipeline/types.js'
 import { join } from 'path'
+import { readFile, writeFile, rename } from 'fs/promises'
 
 export { SemVer } from './core/semver.js'
 export { BumpcraftError, ErrorCode } from './core/errors.js'
@@ -133,6 +134,24 @@ export async function runRelease(options: ReleaseOptions = {}) {
       commits: ctx.parsedCommits,
       changelogOutput: ctx.changelogOutput ?? ''
     })
+
+    // Write CHANGELOG.md — prepend new entry to existing file (atomic write)
+    if (ctx.changelogOutput) {
+      const changelogPath = 'CHANGELOG.md'
+      let existing = ''
+      try {
+        existing = await readFile(changelogPath, 'utf-8')
+      } catch { /* no existing changelog */ }
+
+      const header = '# Changelog\n\n'
+      const body = existing.startsWith('# Changelog')
+        ? existing.replace(/^# Changelog\n*/, '')
+        : existing
+
+      const tmp = `${changelogPath}.tmp`
+      await writeFile(tmp, `${header}${ctx.changelogOutput}\n${body}`, 'utf-8')
+      await rename(tmp, changelogPath)
+    }
   }
 
   return {
