@@ -115,7 +115,9 @@ export function registerRelease(program: Command) {
             await git.createTag(tagName, `Release ${result.nextVersion}`)
           } catch { /* tag may already exist from GitHub release */ }
           await git.push()
-          await git.pushTag(tagName)
+          try {
+            await git.pushTag(tagName)
+          } catch { /* tag may already exist on remote from GitHub release */ }
           console.log(`Pushed commit and tag ${tagName} to remote`)
 
           // If GitHub plugin didn't run but we have a token, create a GitHub release
