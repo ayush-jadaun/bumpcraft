@@ -30,7 +30,7 @@ bumpcraft release [options]
 | `--force-bump <type>` | Override auto-detection. Force `major`, `minor`, or `patch` bump |
 | `--from <ref>` | Analyze commits from a specific git ref instead of the latest tag |
 | `-v, --verbose` | Show debug-level output |
-| `--push` | Commit release artifacts, create git tag, push to remote, and create GitHub release (see below) |
+| `--push` | Commit, tag, push, create GitHub release, and skip CI on the release commit (see below) |
 
 ### `--push` in detail
 
@@ -39,7 +39,7 @@ When `--push` is used, bumpcraft handles the full release lifecycle:
 1. Bumps version in `package.json`
 2. Generates `CHANGELOG.md`
 3. Records release in `.bumpcraft/history.json`
-4. Commits all release artifacts (`package.json`, `CHANGELOG.md`, `.bumpcraft/`)
+4. Commits all release artifacts with `[skip ci]` in the message (prevents CI from re-running on the release commit)
 5. Creates an annotated git tag (`v1.2.0`)
 6. Pushes the commit and tag to remote
 7. **Creates a GitHub Release** with the changelog as the body (if `GITHUB_TOKEN` is available)

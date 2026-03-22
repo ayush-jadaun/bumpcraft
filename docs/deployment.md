@@ -36,7 +36,9 @@ Add to your CI pipeline (GitHub Actions, GitLab CI, etc.):
     GITHUB_REPOSITORY: ${{ github.repository }}
 ```
 
-That's it. `--push` handles committing, tagging, pushing, and creating a GitHub Release with full changelog. Both `GITHUB_TOKEN` and `GITHUB_REPOSITORY` are provided automatically by GitHub Actions — **no secrets to configure**.
+That's it. `--push` handles committing, tagging, pushing, and creating a GitHub Release with full changelog. The release commit includes `[skip ci]` so no CI workflows run on it — no wasted test/lint/build runs.
+
+Both `GITHUB_TOKEN` and `GITHUB_REPOSITORY` are provided automatically by GitHub Actions — **no secrets to configure**.
 
 The only secret you need to add manually is `NPM_TOKEN` (if you want auto-publish to npm).
 

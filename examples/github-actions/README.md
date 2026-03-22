@@ -18,7 +18,8 @@ Automatically release on every push to `main`.
 On every push to `main`:
 1. Checks if there are releasable commits since the last tag
 2. If yes: bumps version, generates changelog, creates GitHub release
-3. If no: exits cleanly, no release
+3. Release commit includes `[skip ci]` — no CI re-runs on the bot commit
+4. If no releasable commits: exits cleanly, no release
 
 ## Customization
 
