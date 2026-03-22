@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.2.1",
+    "previousVersion": "1.2.0",
+    "date": "2026-03-22T14:24:23.062Z",
+    "commits": [
+      {
+        "hash": "05c37232974ef1727ed6fe1d9dc1185bee424d74",
+        "type": "fix",
+        "scope": null,
+        "subject": "init-release now commits version change before tagging",
+        "body": "The tag must point to a commit that includes the updated package.json.\nPrevious version wrote package.json then tagged HEAD (which still had\nthe old version). Now: write → commit → tag → verify.",
+        "breaking": false,
+        "raw": "05c37232974ef1727ed6fe1d9dc1185bee424d74 fix: init-release now commits version change before tagging\nThe tag must point to a commit that includes the updated package.json.\nPrevious version wrote package.json then tagged HEAD (which still had\nthe old version). Now: write → commit → tag → verify."
+      },
+      {
+        "hash": "c0218751c1ed190bae10f96fc6203389f08c7acb",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.2.0",
+        "body": null,
+        "breaking": false,
+        "raw": "c0218751c1ed190bae10f96fc6203389f08c7acb chore(release): 1.2.0"
+      }
+    ],
+    "changelogOutput": "## [1.2.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.2.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.2.0...v1.2.1))\n\n### 🐛 Bug Fixes\n\n- init-release now commits version change before tagging ([05c3723](https://github.com/ayush-jadaun/bumpcraft/commit/05c37232974ef1727ed6fe1d9dc1185bee424d74))\n"
+  },
+  {
     "version": "1.2.0",
     "previousVersion": "1.1.2",
     "date": "2026-03-22T14:18:50.496Z",

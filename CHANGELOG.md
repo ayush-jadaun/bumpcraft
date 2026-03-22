@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.2.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.2.0...v1.2.1))
+
+### 🐛 Bug Fixes
+
+- init-release now commits version change before tagging ([05c3723](https://github.com/ayush-jadaun/bumpcraft/commit/05c37232974ef1727ed6fe1d9dc1185bee424d74))
+
 ## [1.2.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.2.0) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.1.2...v1.2.0))
 
 ### 🚀 Features
