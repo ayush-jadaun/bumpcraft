@@ -32,7 +32,8 @@ jobs:
   release:
     needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Only release on direct pushes to main, skip if the commit is from the bot (prevents infinite loop)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'chore(release)')
     steps:
       - uses: actions/checkout@v4
         with:
@@ -52,7 +53,18 @@ jobs:
       - name: Check for release
         id: check
         run: |
-          npx bumpcraft validate > /dev/null 2>&1 && echo "release=true" >> $GITHUB_OUTPUT || echo "release=false" >> $GITHUB_OUTPUT
+          if node dist/cli/index.js validate; then
+            echo "release=true" >> $GITHUB_OUTPUT
+          else
+            EXIT_CODE=$?
+            if [ $EXIT_CODE -eq 2 ]; then
+              echo "No releasable commits found"
+              echo "release=false" >> $GITHUB_OUTPUT
+            else
+              echo "Validate failed with exit code $EXIT_CODE"
+              exit $EXIT_CODE
+            fi
+          fi
 
       # Run bumpcraft on itself
       - name: Release
@@ -63,15 +75,16 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          npx bumpcraft release --approve
+          node dist/cli/index.js release --approve
           git add package.json CHANGELOG.md .bumpcraft/
           git commit -m "chore(release): $(node -p "require('./package.json').version")" || true
           git push
           git push --tags
 
-      # Publish to npm
+      # Publish to npm (only if NPM_TOKEN is configured)
       - name: Publish to npm
-        if: steps.check.outputs.release == 'true'
+        if: steps.check.outputs.release == 'true' && env.NPM_TOKEN != ''
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish
