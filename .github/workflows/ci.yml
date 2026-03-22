@@ -1,44 +1,77 @@
-# CI/CD pipeline — currently disabled, trigger manually via workflow_dispatch
+# Bumpcraft CI/CD — runs tests on every push/PR, releases on main via bumpcraft itself
 name: CI
 
 on:
-  workflow_dispatch: # manual trigger only — uncomment below to enable on push/PR
-  # push:
-  #   branches: [main, master]
-  # pull_request:
-  #   branches: [main, master]
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: bumpcraft/package-lock.json
-      - run: cd bumpcraft && npm ci
-      - run: cd bumpcraft && npm run lint
-      - run: cd bumpcraft && npm test
-      - run: cd bumpcraft && npm run build
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
 
   release:
     needs: test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: bumpcraft/package-lock.json
-      - run: cd bumpcraft && npm ci
-      - run: cd bumpcraft && npm run build
-      - run: cd bumpcraft && npx bumpcraft release
+          node-version: 20
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+      - run: npm run build
+
+      # Check if there are releasable commits since last tag
+      - name: Check for release
+        id: check
+        run: |
+          npx bumpcraft validate > /dev/null 2>&1 && echo "release=true" >> $GITHUB_OUTPUT || echo "release=false" >> $GITHUB_OUTPUT
+
+      # Run bumpcraft on itself
+      - name: Release
+        if: steps.check.outputs.release == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BUMPCRAFT_API_KEY: ${{ secrets.BUMPCRAFT_API_KEY }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          npx bumpcraft release --approve
+          git add package.json CHANGELOG.md .bumpcraft/
+          git commit -m "chore(release): $(node -p "require('./package.json').version")" || true
+          git push
+          git push --tags
+
+      # Publish to npm
+      - name: Publish to npm
+        if: steps.check.outputs.release == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish
