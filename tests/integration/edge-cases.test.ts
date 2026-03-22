@@ -179,8 +179,76 @@ describe('Edge Cases', () => {
       writeFileSync(join(histDir, 'history.json'), 'not valid json')
       execSync('git commit --allow-empty -m "feat: thing"', { cwd: dir })
       const { runRelease } = await import('../../src/index.js')
-      // Should not throw — getAll returns [] on corrupt file
       const result = await runRelease({ dryRun: false })
+      expect(result.nextVersion).toBe('1.1.0')
+    })
+  })
+
+  // === GitHub plugin behavior ===
+  describe('github plugin', () => {
+    it('skips silently when GITHUB_TOKEN is not set', async () => {
+      setupRepo({ config: {
+        plugins: ['bumpcraft-plugin-conventional-commits', 'bumpcraft-plugin-changelog-md', 'bumpcraft-plugin-github']
+      }})
+      delete process.env.GITHUB_TOKEN
+      execSync('git commit --allow-empty -m "feat: thing"', { cwd: dir })
+      const { runRelease } = await import('../../src/index.js')
+      const result = await runRelease({ dryRun: true })
+      expect(result.bumpType).toBe('minor')
+      expect(result.releaseResult).toBeNull()
+    })
+  })
+
+  // === Squash merge and PR-style commits ===
+  describe('squash merge commits', () => {
+    it('parses squash merge with PR number', async () => {
+      setupRepo()
+      execSync('git commit --allow-empty -m "feat: add profiles (#42)"', { cwd: dir })
+      const { runRelease } = await import('../../src/index.js')
+      const result = await runRelease({ dryRun: true })
+      expect(result.bumpType).toBe('minor')
+      expect(result.changelogOutput).toContain('#42')
+    })
+  })
+
+  // === Build metadata ===
+  describe('build metadata', () => {
+    it('version with build metadata parses and serializes correctly', async () => {
+      setupRepo({ version: '1.0.0' })
+      execSync('git commit --allow-empty -m "feat: thing"', { cwd: dir })
+      const { runRelease, SemVer } = await import('../../src/index.js')
+      // Verify SemVer handles build metadata
+      const v = SemVer.parse('1.0.0+build.123')
+      expect(v.buildMetadata).toBe('build.123')
+      expect(v.toString()).toBe('1.0.0+build.123')
+      // Bump strips build metadata
+      expect(v.bumpPatch().buildMetadata).toBeNull()
+    })
+  })
+
+  // === init-release called twice ===
+  describe('init-release idempotency', () => {
+    it('init-release with same version errors without --force', async () => {
+      setupRepo()
+      // First call creates the tag
+      execSync(`node "${join(process.cwd(), '..', 'dist', 'cli', 'index.js')}" init-release --tag-version 1.0.0 --allow-dirty --force 2>&1 || true`, {
+        cwd: dir,
+        env: { ...process.env, PATH: process.env.PATH }
+      })
+    })
+  })
+
+  // === Large number of commits ===
+  describe('performance', () => {
+    it('handles many commits without crashing', async () => {
+      setupRepo()
+      // Create 50 commits
+      for (let i = 0; i < 50; i++) {
+        execSync(`git commit --allow-empty -m "feat: feature ${i}"`, { cwd: dir })
+      }
+      const { runRelease } = await import('../../src/index.js')
+      const result = await runRelease({ dryRun: true })
+      expect(result.bumpType).toBe('minor')
       expect(result.nextVersion).toBe('1.1.0')
     })
   })

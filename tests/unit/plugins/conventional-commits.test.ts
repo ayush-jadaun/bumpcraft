@@ -145,4 +145,41 @@ describe('conventionalCommitsPlugin', () => {
     expect(result.parsedCommits).toHaveLength(0)
     expect(result.bumpType).toBe('none')
   })
+
+  // Squash merge with PR number
+  it('handles squash merge with PR number in subject', async () => {
+    const result = await conventionalCommitsPlugin.execute(
+      ctx(['abc123 feat: add user profiles (#42)'])
+    )
+    expect(result.parsedCommits[0]).toMatchObject({ type: 'feat', subject: 'add user profiles (#42)' })
+    expect(result.bumpType).toBe('minor')
+  })
+
+  // Emoji in commit message
+  it('handles emoji in commit subject', async () => {
+    const result = await conventionalCommitsPlugin.execute(
+      ctx(['abc123 feat: ✨ add sparkle effect'])
+    )
+    expect(result.parsedCommits[0].subject).toBe('✨ add sparkle effect')
+    expect(result.bumpType).toBe('minor')
+  })
+
+  // Extra whitespace
+  it('trims extra whitespace in subject', async () => {
+    const result = await conventionalCommitsPlugin.execute(
+      ctx(['abc123 fix:   lots of spaces   '])
+    )
+    expect(result.parsedCommits[0].subject).toBe('lots of spaces')
+  })
+
+  // Commit with only hash (garbage input)
+  it('skips garbage input gracefully', async () => {
+    const result = await conventionalCommitsPlugin.execute(ctx([
+      'abc123',
+      '   ',
+      'abc123 feat: valid one'
+    ]))
+    expect(result.parsedCommits).toHaveLength(1)
+    expect(result.parsedCommits[0].subject).toBe('valid one')
+  })
 })
