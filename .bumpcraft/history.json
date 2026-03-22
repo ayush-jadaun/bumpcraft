@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.4.1",
+    "previousVersion": "1.4.0",
+    "date": "2026-03-22T16:49:43.332Z",
+    "commits": [
+      {
+        "hash": "c016b193cc941b1ff7b885fca248277f0ac8a039",
+        "type": "fix",
+        "scope": null,
+        "subject": "--push silently skips pushTag when tag already exists on remote",
+        "body": "The GitHub plugin creates a release via API which auto-creates the\ntag on remote. The --push flow then tried to push the same tag,\ncausing a rejected error. Now caught gracefully.",
+        "breaking": false,
+        "raw": "c016b193cc941b1ff7b885fca248277f0ac8a039 fix: --push silently skips pushTag when tag already exists on remote\nThe GitHub plugin creates a release via API which auto-creates the\ntag on remote. The --push flow then tried to push the same tag,\ncausing a rejected error. Now caught gracefully."
+      },
+      {
+        "hash": "a898c668fd010fcd8219755f1719da7df891766d",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.4.0",
+        "body": null,
+        "breaking": false,
+        "raw": "a898c668fd010fcd8219755f1719da7df891766d chore(release): 1.4.0"
+      }
+    ],
+    "changelogOutput": "## [1.4.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.4.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.4.0...v1.4.1))\n\n### 🐛 Bug Fixes\n\n- --push silently skips pushTag when tag already exists on remote ([c016b19](https://github.com/ayush-jadaun/bumpcraft/commit/c016b193cc941b1ff7b885fca248277f0ac8a039))\n"
+  },
+  {
     "version": "1.4.0",
     "previousVersion": "1.3.1",
     "date": "2026-03-22T16:45:22.827Z",

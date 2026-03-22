@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.4.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.4.0...v1.4.1))
+
+### 🐛 Bug Fixes
+
+- --push silently skips pushTag when tag already exists on remote ([c016b19](https://github.com/ayush-jadaun/bumpcraft/commit/c016b193cc941b1ff7b885fca248277f0ac8a039))
+
 ## [1.4.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.4.0) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.3.1...v1.4.0))
 
 ### 🚀 Features
