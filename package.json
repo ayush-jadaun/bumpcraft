@@ -16,6 +16,7 @@
   },
   "files": [
     "dist/",
+    "llms.txt",
     "README.md",
     "LICENSE"
   ],

@@ -1,0 +1,172 @@
+# Bumpcraft
+
+Bumpcraft is a pluggable semantic versioning engine for Node.js projects. It reads Conventional Commits from git history, determines the version bump (major/minor/patch), generates a changelog, and optionally creates a GitHub release.
+
+## Install
+
+```bash
+npm install -g bumpcraft    # CLI
+npm install bumpcraft        # library
+```
+
+## Quick Start (CLI)
+
+```bash
+bumpcraft init               # create .bumpcraftrc.json
+bumpcraft validate           # preview what a release would do
+bumpcraft release            # bump version, changelog, tag, GitHub release
+bumpcraft release --dry-run  # preview only
+```
+
+## Quick Start (Library)
+
+```typescript
+import { runRelease, currentVersion } from 'bumpcraft'
+
+// Get current version from package.json
+const version = await currentVersion()
+
+// Preview a release (dry run)
+const preview = await runRelease({ dryRun: true })
+// preview.bumpType: 'major' | 'minor' | 'patch' | 'none'
+// preview.nextVersion: '1.2.0'
+// preview.changelogOutput: '## 1.2.0 (2026-03-22)\n...'
+
+// Actual release
+const result = await runRelease()
+
+// Release with options
+const result = await runRelease({
+  dryRun: false,              // actually write changes
+  preRelease: 'beta',         // create 1.2.0-beta.1
+  forceBump: 'minor',         // override: 'major' | 'minor' | 'patch'
+  from: 'v1.0.0',            // analyze commits from this ref
+  verbose: true,              // verbose logging
+  overrideChangelog: '...',   // custom changelog text
+})
+
+// Release with specific commits (for release groups)
+import { runReleaseWithCommits } from 'bumpcraft'
+const result = await runReleaseWithCommits(['abc123 feat: add thing', 'def456 fix: bug'])
+```
+
+## Return Type
+
+```typescript
+{
+  bumpType: 'major' | 'minor' | 'patch' | 'none'
+  currentVersion: string       // e.g. '1.0.0'
+  nextVersion: string | null   // e.g. '1.1.0', null if no release
+  changelogOutput: string | null
+  releaseResult: { url?: string; id?: string } | null
+  dryRun: boolean
+}
+```
+
+## Exported Types
+
+```typescript
+import type { BumpcraftPlugin, PipelineContext, ParsedCommit, BumpType, BumpcraftConfig } from 'bumpcraft'
+import { SemVer, BumpcraftError, ErrorCode } from 'bumpcraft'
+```
+
+## Configuration (.bumpcraftrc.json)
+
+```json
+{
+  "versionSource": "package.json",         // or "git-tag"
+  "plugins": [
+    "bumpcraft-plugin-conventional-commits",
+    "bumpcraft-plugin-changelog-md",
+    "bumpcraft-plugin-github"
+  ],
+  "branches": {
+    "release": ["main", "master"],
+    "preRelease": { "develop": "beta" }
+  },
+  "commitTypes": {
+    "feat": "minor",
+    "fix": "patch",
+    "perf": "patch",
+    "chore": "none",
+    "docs": "none"
+  },
+  "policies": {
+    "requireApproval": ["major"],
+    "autoRelease": ["patch", "minor"],
+    "freezeAfter": "friday 17:00",
+    "maxBumpPerDay": 10
+  }
+}
+```
+
+## Conventional Commits Format
+
+```
+feat: add feature          → minor bump
+fix: fix bug               → patch bump
+feat!: breaking change     → major bump
+BREAKING CHANGE: in body   → major bump
+chore: update deps         → no bump
+docs: update readme        → no bump
+```
+
+## CLI Commands
+
+| Command | Description |
+|---------|-------------|
+| `bumpcraft release` | Full release pipeline |
+| `bumpcraft release --dry-run` | Preview without changes |
+| `bumpcraft release --force-bump major` | Force bump type |
+| `bumpcraft release --pre-release beta` | Pre-release version |
+| `bumpcraft release -i` | Interactive mode |
+| `bumpcraft release --approve` | Override policy blocks |
+| `bumpcraft validate` | Preview (alias for --dry-run) |
+| `bumpcraft version` | Show current version |
+| `bumpcraft changelog` | Generate changelog only |
+| `bumpcraft history` | Query release history |
+| `bumpcraft history --breaking` | Breaking changes only |
+| `bumpcraft group create <name>` | Create release group |
+| `bumpcraft group add <name>` | Add commits to group |
+| `bumpcraft group release <name>` | Release a group |
+| `bumpcraft plugins list` | List configured plugins |
+| `bumpcraft init` | Create config file |
+
+## REST API (run with `npm start`)
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | /api/health | No | Health check |
+| GET | /api/version | No | Current version |
+| GET | /api/changelog/latest | No | Latest changelog |
+| GET | /api/history | No | Release history |
+| POST | /api/release | Yes | Trigger release |
+| POST | /api/release/dry-run | Yes | Preview release |
+| GET | /dashboard | No | Web UI |
+
+Auth: Set `BUMPCRAFT_API_KEY` env var, send `X-API-Key` header.
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `GITHUB_TOKEN` | GitHub PAT for creating releases |
+| `GITHUB_REPOSITORY` | `owner/repo` format |
+| `BUMPCRAFT_API_KEY` | API key for write endpoints |
+| `BUMPCRAFT_AUTH_ALL` | Require key for all endpoints |
+| `PORT` | API server port (default 3000) |
+
+## Writing a Plugin
+
+```typescript
+import type { BumpcraftPlugin, PipelineContext } from 'bumpcraft'
+
+const myPlugin: BumpcraftPlugin = {
+  name: 'my-plugin',
+  stage: 'changelog',  // 'parse' | 'resolve' | 'changelog' | 'release' | 'notify'
+  async execute(context: PipelineContext): Promise<PipelineContext> {
+    // Read from context, return modified context
+    return { ...context, changelogOutput: 'custom changelog' }
+  }
+}
+```
