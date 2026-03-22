@@ -1,5 +1,76 @@
 [
   {
+    "version": "1.1.0",
+    "previousVersion": "1.0.3",
+    "date": "2026-03-22T13:49:25.052Z",
+    "commits": [
+      {
+        "hash": "d689c82b877aa2049cc8de945f8419aadb793b4b",
+        "type": "ci",
+        "scope": null,
+        "subject": "enable CI/CD pipeline — tests on push/PR, auto-release on main",
+        "body": "- Tests run on Node 20 and 22 for every push and PR\n- On main: bumpcraft releases itself (version bump, changelog, GitHub release)\n- Commits release artifacts (package.json, CHANGELOG.md, .bumpcraft/)\n- Publishes to npm automatically via NPM_TOKEN secret\n- Skips release if no conventional commits since last tag",
+        "breaking": false,
+        "raw": "d689c82b877aa2049cc8de945f8419aadb793b4b ci: enable CI/CD pipeline — tests on push/PR, auto-release on main\n- Tests run on Node 20 and 22 for every push and PR\n- On main: bumpcraft releases itself (version bump, changelog, GitHub release)\n- Commits release artifacts (package.json, CHANGELOG.md, .bumpcraft/)\n- Publishes to npm automatically via NPM_TOKEN secret\n- Skips release if no conventional commits since last tag"
+      },
+      {
+        "hash": "5f7101aa216e12dab727bee5358b917c2dce4766",
+        "type": "feat",
+        "scope": null,
+        "subject": "rich changelog with emoji sections, commit links, and compare URLs",
+        "body": "- Changelog sections use emoji labels (🚀 Features, 🐛 Bug Fixes, etc.)\n- Commit hashes link to GitHub commit pages when GITHUB_REPOSITORY is set\n- Version header links to the GitHub release page\n- Compare link shows diff between previous and new version\n- Breaking changes section with ⚠ at the top\n- Sections ordered by importance (features → fixes → perf → refactor → docs)\n- Atomic CHANGELOG.md write via tmp+rename\n- Tests updated for new format",
+        "breaking": false,
+        "raw": "5f7101aa216e12dab727bee5358b917c2dce4766 feat: rich changelog with emoji sections, commit links, and compare URLs\n- Changelog sections use emoji labels (🚀 Features, 🐛 Bug Fixes, etc.)\n- Commit hashes link to GitHub commit pages when GITHUB_REPOSITORY is set\n- Version header links to the GitHub release page\n- Compare link shows diff between previous and new version\n- Breaking changes section with ⚠ at the top\n- Sections ordered by importance (features → fixes → perf → refactor → docs)\n- Atomic CHANGELOG.md write via tmp+rename\n- Tests updated for new format"
+      },
+      {
+        "hash": "5b7a3432207764897f72512c71e6b36040d85f2b",
+        "type": "feat",
+        "scope": null,
+        "subject": "CHANGELOG.md auto-generated on release + audit fixes",
+        "body": "- Release pipeline now writes/prepends to CHANGELOG.md automatically\n- Atomic write via tmp + rename (consistent with all other file writes)\n- Integration tests for CHANGELOG.md creation and prepend behavior\n- CI examples updated to commit package.json + CHANGELOG.md + .bumpcraft/",
+        "breaking": false,
+        "raw": "5b7a3432207764897f72512c71e6b36040d85f2b feat: CHANGELOG.md auto-generated on release + audit fixes\n- Release pipeline now writes/prepends to CHANGELOG.md automatically\n- Atomic write via tmp + rename (consistent with all other file writes)\n- Integration tests for CHANGELOG.md creation and prepend behavior\n- CI examples updated to commit package.json + CHANGELOG.md + .bumpcraft/"
+      },
+      {
+        "hash": "0ad4d8f9d0349fe9fcb4bdb34256edab74f27cad",
+        "type": "docs",
+        "scope": null,
+        "subject": "add npm and license badges to README",
+        "body": null,
+        "breaking": false,
+        "raw": "0ad4d8f9d0349fe9fcb4bdb34256edab74f27cad docs: add npm and license badges to README"
+      },
+      {
+        "hash": "e4307113ef4713bfc69d47198cc721a410687315",
+        "type": "docs",
+        "scope": null,
+        "subject": "add CHANGELOG, CONTRIBUTING, and issue templates for open-source release",
+        "body": null,
+        "breaking": false,
+        "raw": "e4307113ef4713bfc69d47198cc721a410687315 docs: add CHANGELOG, CONTRIBUTING, and issue templates for open-source release"
+      },
+      {
+        "hash": "b949501e728a7845193c7eb187f2d23f8826f271",
+        "type": "docs",
+        "scope": null,
+        "subject": "add production examples (GitHub Actions, GitLab CI, programmatic, groups, Docker API)",
+        "body": null,
+        "breaking": false,
+        "raw": "b949501e728a7845193c7eb187f2d23f8826f271 docs: add production examples (GitHub Actions, GitLab CI, programmatic, groups, Docker API)"
+      },
+      {
+        "hash": "51af27c82d5432e98d7f34552dd85cc0461aadae",
+        "type": "chore",
+        "scope": null,
+        "subject": "release v1.0.3 via bumpcraft",
+        "body": null,
+        "breaking": false,
+        "raw": "51af27c82d5432e98d7f34552dd85cc0461aadae chore: release v1.0.3 via bumpcraft"
+      }
+    ],
+    "changelogOutput": "## [1.1.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.1.0) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.0.3...v1.1.0))\n\n### 🚀 Features\n\n- rich changelog with emoji sections, commit links, and compare URLs ([5f7101a](https://github.com/ayush-jadaun/bumpcraft/commit/5f7101aa216e12dab727bee5358b917c2dce4766))\n- CHANGELOG.md auto-generated on release + audit fixes ([5b7a343](https://github.com/ayush-jadaun/bumpcraft/commit/5b7a3432207764897f72512c71e6b36040d85f2b))\n\n### 📚 Documentation\n\n- add npm and license badges to README ([0ad4d8f](https://github.com/ayush-jadaun/bumpcraft/commit/0ad4d8f9d0349fe9fcb4bdb34256edab74f27cad))\n- add CHANGELOG, CONTRIBUTING, and issue templates for open-source release ([e430711](https://github.com/ayush-jadaun/bumpcraft/commit/e4307113ef4713bfc69d47198cc721a410687315))\n- add production examples (GitHub Actions, GitLab CI, programmatic, groups, Docker API) ([b949501](https://github.com/ayush-jadaun/bumpcraft/commit/b949501e728a7845193c7eb187f2d23f8826f271))\n\n### ci\n\n- enable CI/CD pipeline — tests on push/PR, auto-release on main ([d689c82](https://github.com/ayush-jadaun/bumpcraft/commit/d689c82b877aa2049cc8de945f8419aadb793b4b))\n"
+  },
+  {
     "version": "1.0.3",
     "previousVersion": "1.0.2",
     "date": "2026-03-18T15:58:37.312Z",
