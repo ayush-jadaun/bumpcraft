@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.2.2) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.2.1...v1.2.2))
+
+### 🐛 Bug Fixes
+
+- rename --version to --tag-version in init-release (conflicts with commander global --version flag) ([baf5969](https://github.com/ayush-jadaun/bumpcraft/commit/baf5969200ee4877bad092a029e71e6afd2c7ed1))
+
 ## [1.2.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.2.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.2.0...v1.2.1))
 
 ### 🐛 Bug Fixes

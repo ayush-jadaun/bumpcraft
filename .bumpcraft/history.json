@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.2.2",
+    "previousVersion": "1.2.1",
+    "date": "2026-03-22T14:29:59.966Z",
+    "commits": [
+      {
+        "hash": "baf5969200ee4877bad092a029e71e6afd2c7ed1",
+        "type": "fix",
+        "scope": null,
+        "subject": "rename --version to --tag-version in init-release (conflicts with commander global --version flag)",
+        "body": null,
+        "breaking": false,
+        "raw": "baf5969200ee4877bad092a029e71e6afd2c7ed1 fix: rename --version to --tag-version in init-release (conflicts with commander global --version flag)"
+      },
+      {
+        "hash": "8a7c146e478ae2f9060e350f65586a903bd9caca",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.2.1",
+        "body": null,
+        "breaking": false,
+        "raw": "8a7c146e478ae2f9060e350f65586a903bd9caca chore(release): 1.2.1"
+      }
+    ],
+    "changelogOutput": "## [1.2.2](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.2.2) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.2.1...v1.2.2))\n\n### 🐛 Bug Fixes\n\n- rename --version to --tag-version in init-release (conflicts with commander global --version flag) ([baf5969](https://github.com/ayush-jadaun/bumpcraft/commit/baf5969200ee4877bad092a029e71e6afd2c7ed1))\n"
+  },
+  {
     "version": "1.2.1",
     "previousVersion": "1.2.0",
     "date": "2026-03-22T14:24:23.062Z",
