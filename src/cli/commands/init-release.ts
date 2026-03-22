@@ -5,6 +5,7 @@ import { loadConfig } from '../../core/config.js'
 import { createVersionSource } from '../../core/version-source.js'
 import { HistoryStore } from '../../history/history-store.js'
 import { join } from 'path'
+import { execSync } from 'child_process'
 
 export function registerInitRelease(program: Command) {
   program
@@ -14,7 +15,6 @@ export function registerInitRelease(program: Command) {
     .option('--message <msg>', 'Tag message', 'Initial release')
     .option('--force', 'Overwrite existing tag')
     .option('--allow-dirty', 'Allow tagging with uncommitted changes')
-    .option('--no-commit', 'Skip committing the package.json change')
     .action(async (opts) => {
       try {
         // Validate version
@@ -51,14 +51,8 @@ export function registerInitRelease(program: Command) {
             process.exit(1)
             return
           }
-          // Delete existing tag to recreate
-          try {
-            await git.deleteTag(tagName)
-          } catch {
-            console.error(`Failed to delete existing tag ${tagName}`)
-            process.exit(1)
-            return
-          }
+          await git.deleteTag(tagName)
+          console.log(`Deleted existing tag ${tagName}`)
         }
 
         // Update package.json version
@@ -66,10 +60,6 @@ export function registerInitRelease(program: Command) {
         const versionSource = createVersionSource(config.versionSource)
         await versionSource.write(version)
         console.log(`Updated ${config.versionSource} to ${version.toString()}`)
-
-        // Create git tag
-        await git.createTag(tagName, opts.message)
-        console.log(`Created tag ${tagName}`)
 
         // Record in release history
         const store = new HistoryStore(join('.bumpcraft', 'history.json'))
@@ -81,6 +71,27 @@ export function registerInitRelease(program: Command) {
           changelogOutput: `Baseline release — adopted bumpcraft at ${version.toString()}`
         })
         console.log(`Recorded in release history`)
+
+        // Commit the version change so the tag points to a commit WITH the new version
+        try {
+          execSync('git add package.json .bumpcraft/', { stdio: 'pipe' })
+          execSync(`git commit -m "chore(release): baseline ${version.toString()}"`, { stdio: 'pipe' })
+          console.log(`Committed version change`)
+        } catch {
+          // If nothing to commit (e.g. version already matched), that's fine
+        }
+
+        // Create git tag on the commit that has the correct version
+        await git.createTag(tagName, opts.message)
+
+        // Verify the tag was actually created
+        if (await git.tagExists(tagName)) {
+          console.log(`Created tag ${tagName}`)
+        } else {
+          console.error(`Failed to create tag ${tagName}`)
+          process.exit(1)
+          return
+        }
 
         console.log(`\nBaseline release ${tagName} created successfully.`)
         console.log(`Future \`bumpcraft release\` will only look at commits after this point.`)
