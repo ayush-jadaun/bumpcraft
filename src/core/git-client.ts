@@ -42,11 +42,46 @@ export class GitClient {
     }
   }
 
+  async tagExists(tag: string): Promise<boolean> {
+    try {
+      await this.git.raw(['rev-parse', tag])
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  async isDirty(): Promise<boolean> {
+    try {
+      const status = await this.git.status()
+      return status.files.length > 0
+    } catch {
+      return false
+    }
+  }
+
+  async hasCommits(): Promise<boolean> {
+    try {
+      await this.git.raw(['rev-parse', 'HEAD'])
+      return true
+    } catch {
+      return false
+    }
+  }
+
   async createTag(tag: string, message: string): Promise<void> {
     try {
       await this.git.addAnnotatedTag(tag, message)
     } catch (e) {
       throw new BumpcraftError(ErrorCode.GIT_ERROR, `Failed to create tag: ${e}`)
+    }
+  }
+
+  async deleteTag(tag: string): Promise<void> {
+    try {
+      await this.git.raw(['tag', '-d', tag])
+    } catch (e) {
+      throw new BumpcraftError(ErrorCode.GIT_ERROR, `Failed to delete tag: ${e}`)
     }
   }
 }

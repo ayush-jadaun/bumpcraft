@@ -7,6 +7,7 @@ import { registerInit } from './commands/init.js'
 import { registerPlugins } from './commands/plugins.js'
 import { registerGroup } from './commands/group.js'
 import { registerHistory } from './commands/history.js'
+import { registerInitRelease } from './commands/init-release.js'
 
 const program = new Command()
 
@@ -22,6 +23,7 @@ registerInit(program)
 registerPlugins(program)
 registerGroup(program)
 registerHistory(program)
+registerInitRelease(program)
 
 program
   .command('validate')

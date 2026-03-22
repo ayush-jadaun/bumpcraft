@@ -131,6 +131,7 @@ docs: update readme        → no bump
 | `bumpcraft group release <name>` | Release a group |
 | `bumpcraft plugins list` | List configured plugins |
 | `bumpcraft init` | Create config file |
+| `bumpcraft init-release --version 1.0.0` | Tag current commit as baseline (for adopting bumpcraft) |
 
 ## REST API (run with `npm start`)
 
