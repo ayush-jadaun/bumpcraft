@@ -109,7 +109,7 @@ export function registerRelease(program: Command) {
           try {
             const { execSync } = await import('child_process')
             execSync('git add package.json CHANGELOG.md .bumpcraft/', { stdio: 'pipe' })
-            execSync(`git commit -m "chore(release): ${result.nextVersion}"`, { stdio: 'pipe' })
+            execSync(`git commit -m "chore(release): ${result.nextVersion} [skip ci]"`, { stdio: 'pipe' })
           } catch { /* nothing to commit */ }
           try {
             await git.createTag(tagName, `Release ${result.nextVersion}`)

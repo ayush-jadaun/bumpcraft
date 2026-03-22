@@ -76,7 +76,7 @@ export function registerInitRelease(program: Command) {
         // Commit the version change so the tag points to a commit WITH the new version
         try {
           execSync('git add package.json .bumpcraft/', { stdio: 'pipe' })
-          execSync(`git commit -m "chore(release): baseline ${version.toString()}"`, { stdio: 'pipe' })
+          execSync(`git commit -m "chore(release): baseline ${version.toString()} [skip ci]"`, { stdio: 'pipe' })
           console.log(`Committed version change`)
         } catch {
           // If nothing to commit (e.g. version already matched), that's fine

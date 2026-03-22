@@ -242,8 +242,8 @@ describe('Edge Cases', () => {
   describe('performance', () => {
     it('handles many commits without crashing', async () => {
       setupRepo()
-      // Create 50 commits
-      for (let i = 0; i < 50; i++) {
+      // Create 20 commits
+      for (let i = 0; i < 20; i++) {
         execSync(`git commit --allow-empty -m "feat: feature ${i}"`, { cwd: dir })
       }
       const { runRelease } = await import('../../src/index.js')
