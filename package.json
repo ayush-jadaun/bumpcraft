@@ -1,6 +1,6 @@
 {
   "name": "bumpcraft",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "A pluggable semantic versioning engine with changelog generation, release policies, and a web dashboard",
   "type": "module",
   "main": "./dist/index.js",

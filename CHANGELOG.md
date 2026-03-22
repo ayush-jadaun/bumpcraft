@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.3.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.3.0) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.2.2...v1.3.0))
+
+### 🚀 Features
+
+- add --push flag to release and init-release commands ([9a1b90e](https://github.com/ayush-jadaun/bumpcraft/commit/9a1b90e0290db9567c4a39b1768d5bf33c4921f4))
+
 ## [1.2.2](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.2.2) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.2.1...v1.2.2))
 
 ### 🐛 Bug Fixes
