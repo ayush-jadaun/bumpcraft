@@ -50,6 +50,16 @@ export async function runRelease(options: ReleaseOptions = {}) {
   const versionSource = createVersionSource(config.versionSource)
   const currentVersion = await versionSource.read()
 
+  // Warn on shallow clones — commit history may be incomplete
+  if (await git.isShallowClone()) {
+    logger.warn('Shallow clone detected — commit history may be incomplete. Use fetch-depth: 0 in CI.')
+  }
+
+  // Warn on dirty working tree for non-dry-run
+  if (!options.dryRun && await git.isDirty()) {
+    logger.warn('Working tree has uncommitted changes. The release tag will not include them.')
+  }
+
   // Branch strategy
   try {
     const currentBranch = await git.getCurrentBranch()

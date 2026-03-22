@@ -1,7 +1,7 @@
 import type { BumpcraftPlugin, ParsedCommit, PipelineContext } from '../pipeline/types.js'
 import { resolveBump } from '../core/bump-resolver.js'
 
-const COMMIT_REGEX = /^([a-f0-9]+)\s+(\w+)(\([\w/-]+\))?(!)?\s*:\s*(.+)/
+const COMMIT_REGEX = /^([a-fA-F0-9]+)\s+(\w+)(\([\w/-]+\))?(!)?\s*:\s*(.+)/
 
 function parseCommit(raw: string): ParsedCommit | null {
   const lines = raw.split('\n')

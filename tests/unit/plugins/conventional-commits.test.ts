@@ -146,6 +146,17 @@ describe('conventionalCommitsPlugin', () => {
     expect(result.bumpType).toBe('none')
   })
 
+  // Uppercase hex hash
+  it('handles uppercase hex in commit hash', async () => {
+    const result = await conventionalCommitsPlugin.execute(ctx(['ABC123 feat: uppercase hash']))
+    expect(result.parsedCommits[0]).toMatchObject({ hash: 'ABC123', type: 'feat' })
+  })
+
+  it('handles mixed case hex hash', async () => {
+    const result = await conventionalCommitsPlugin.execute(ctx(['aBcDeF feat: mixed case']))
+    expect(result.parsedCommits[0].hash).toBe('aBcDeF')
+  })
+
   // Squash merge with PR number
   it('handles squash merge with PR number in subject', async () => {
     const result = await conventionalCommitsPlugin.execute(

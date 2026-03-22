@@ -2,6 +2,8 @@ import { simpleGit, SimpleGit } from 'simple-git'
 import { BumpcraftError, ErrorCode } from './errors.js'
 import { SemVer } from './semver.js'
 
+const MAX_COMMITS_NO_TAG = 500
+
 export class GitClient {
   private git: SimpleGit
 
@@ -32,13 +34,22 @@ export class GitClient {
 
   async getCommitsSince(ref: string | null): Promise<string[]> {
     try {
-      const range = ref ? `${ref}..HEAD` : 'HEAD'
-      // %H %s = hash + subject; %n%b = body (multi-line); %x00 = NUL separator between commits
-      // NUL cannot appear in commit messages, making it a reliable record separator
-      const output = await this.git.raw(['log', range, '--format=%H %s%n%b%x00'])
+      const args = ref
+        ? ['log', `${ref}..HEAD`, '--format=%H %s%n%b%x00']
+        : ['log', 'HEAD', `--max-count=${MAX_COMMITS_NO_TAG}`, '--format=%H %s%n%b%x00']
+      const output = await this.git.raw(args)
       return output.split('\0').map(s => s.trim()).filter(s => s.length > 0)
     } catch (e) {
       throw new BumpcraftError(ErrorCode.GIT_ERROR, `Failed to get commits: ${e}`)
+    }
+  }
+
+  async isShallowClone(): Promise<boolean> {
+    try {
+      const result = await this.git.raw(['rev-parse', '--is-shallow-repository'])
+      return result.trim() === 'true'
+    } catch {
+      return false
     }
   }
 
