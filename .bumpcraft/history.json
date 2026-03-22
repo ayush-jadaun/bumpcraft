@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.4.0",
+    "previousVersion": "1.3.1",
+    "date": "2026-03-22T16:45:22.827Z",
+    "commits": [
+      {
+        "hash": "32b97502583e9e1cabb3ac4c57fdf6174a7d571d",
+        "type": "feat",
+        "scope": null,
+        "subject": "--push auto-creates GitHub release when GITHUB_TOKEN is set",
+        "body": "No plugin config needed — when --push is used and GITHUB_TOKEN +\nGITHUB_REPOSITORY env vars are available (auto-provided in GitHub\nActions), bumpcraft creates a GitHub Release with the full changelog\nas the body. Zero secrets to configure for GitHub Actions users.\n\nDocs updated: cli-reference.md, deployment.md, llms.txt",
+        "breaking": false,
+        "raw": "32b97502583e9e1cabb3ac4c57fdf6174a7d571d feat: --push auto-creates GitHub release when GITHUB_TOKEN is set\nNo plugin config needed — when --push is used and GITHUB_TOKEN +\nGITHUB_REPOSITORY env vars are available (auto-provided in GitHub\nActions), bumpcraft creates a GitHub Release with the full changelog\nas the body. Zero secrets to configure for GitHub Actions users.\n\nDocs updated: cli-reference.md, deployment.md, llms.txt"
+      },
+      {
+        "hash": "d01131614548f97323d003d47bfef2b8634f0052",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.3.1",
+        "body": null,
+        "breaking": false,
+        "raw": "d01131614548f97323d003d47bfef2b8634f0052 chore(release): 1.3.1"
+      }
+    ],
+    "changelogOutput": "## [1.4.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.4.0) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.3.1...v1.4.0))\n\n### 🚀 Features\n\n- --push auto-creates GitHub release when GITHUB_TOKEN is set ([32b9750](https://github.com/ayush-jadaun/bumpcraft/commit/32b97502583e9e1cabb3ac4c57fdf6174a7d571d))\n"
+  },
+  {
     "version": "1.3.1",
     "previousVersion": "1.3.0",
     "date": "2026-03-22T16:36:42.452Z",

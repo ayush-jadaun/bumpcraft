@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.4.0) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.3.1...v1.4.0))
+
+### 🚀 Features
+
+- --push auto-creates GitHub release when GITHUB_TOKEN is set ([32b9750](https://github.com/ayush-jadaun/bumpcraft/commit/32b97502583e9e1cabb3ac4c57fdf6174a7d571d))
+
 ## [1.3.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.3.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.3.0...v1.3.1))
 
 ### 🐛 Bug Fixes
