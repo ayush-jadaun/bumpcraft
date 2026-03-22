@@ -11,7 +11,7 @@ export function registerInitRelease(program: Command) {
   program
     .command('init-release')
     .description('Tag the current commit as a baseline release (for adopting bumpcraft in existing projects)')
-    .requiredOption('--version <version>', 'Version to tag (e.g. 1.0.0)')
+    .requiredOption('--tag-version <version>', 'Version to tag (e.g. 1.0.0)')
     .option('--message <msg>', 'Tag message', 'Initial release')
     .option('--force', 'Overwrite existing tag')
     .option('--allow-dirty', 'Allow tagging with uncommitted changes')
@@ -20,9 +20,9 @@ export function registerInitRelease(program: Command) {
         // Validate version
         let version: SemVer
         try {
-          version = SemVer.parse(opts.version)
+          version = SemVer.parse(opts.tagVersion)
         } catch {
-          console.error(`Invalid semver: "${opts.version}"`)
+          console.error(`Invalid semver: "${opts.tagVersion}"`)
           process.exit(1)
           return
         }
