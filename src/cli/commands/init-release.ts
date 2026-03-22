@@ -15,6 +15,7 @@ export function registerInitRelease(program: Command) {
     .option('--message <msg>', 'Tag message', 'Initial release')
     .option('--force', 'Overwrite existing tag')
     .option('--allow-dirty', 'Allow tagging with uncommitted changes')
+    .option('--push', 'Push the commit and tag to remote')
     .action(async (opts) => {
       try {
         // Validate version
@@ -91,6 +92,13 @@ export function registerInitRelease(program: Command) {
           console.error(`Failed to create tag ${tagName}`)
           process.exit(1)
           return
+        }
+
+        // Push if requested
+        if (opts.push) {
+          await git.push()
+          await git.pushTag(tagName)
+          console.log(`Pushed commit and tag to remote`)
         }
 
         console.log(`\nBaseline release ${tagName} created successfully.`)

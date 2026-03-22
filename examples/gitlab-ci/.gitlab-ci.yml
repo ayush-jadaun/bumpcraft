@@ -33,14 +33,6 @@ release:
     # Check if there's anything to release
     - npx bumpcraft validate || exit 0
 
-    # Release
-    - npx bumpcraft release --approve
-
-    # Commit version bump, changelog, and history
-    - git add package.json CHANGELOG.md .bumpcraft/
-    - git commit -m "chore(release):$(node -p \"require('./package.json').version\")" || true
-
-    # Push back to repo
+    # Release — --push handles commit, tag, and push
     - git remote set-url origin "https://oauth2:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
-    - git push origin HEAD:main
-    - git push origin --tags
+    - npx bumpcraft release --approve --push

@@ -121,6 +121,7 @@ docs: update readme        → no bump
 | `bumpcraft release --pre-release beta` | Pre-release version |
 | `bumpcraft release -i` | Interactive mode |
 | `bumpcraft release --approve` | Override policy blocks |
+| `bumpcraft release --push` | Commit, tag, and push to remote after release |
 | `bumpcraft validate` | Preview (alias for --dry-run) |
 | `bumpcraft version` | Show current version |
 | `bumpcraft changelog` | Generate changelog only |

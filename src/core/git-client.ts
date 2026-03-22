@@ -77,6 +77,22 @@ export class GitClient {
     }
   }
 
+  async pushTag(tag: string): Promise<void> {
+    try {
+      await this.git.push('origin', tag)
+    } catch (e) {
+      throw new BumpcraftError(ErrorCode.GIT_ERROR, `Failed to push tag ${tag}: ${e}`)
+    }
+  }
+
+  async push(): Promise<void> {
+    try {
+      await this.git.push()
+    } catch (e) {
+      throw new BumpcraftError(ErrorCode.GIT_ERROR, `Failed to push: ${e}`)
+    }
+  }
+
   async deleteTag(tag: string): Promise<void> {
     try {
       await this.git.raw(['tag', '-d', tag])

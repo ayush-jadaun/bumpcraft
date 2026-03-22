@@ -20,6 +20,7 @@ export function registerRelease(program: Command) {
     .option('--force-bump <type>', 'Force major/minor/patch bump')
     .option('--from <ref>', 'Analyze commits from this ref')
     .option('-v, --verbose', 'Verbose output')
+    .option('--push', 'Push the commit and tag to remote after release')
     .action(async (opts) => {
       try {
         if (opts.forceBump && !VALID_BUMPS.includes(opts.forceBump)) {
@@ -95,6 +96,25 @@ export function registerRelease(program: Command) {
 
         console.log(`Released: ${result.nextVersion}`)
         if (result.releaseResult?.url) console.log(`GitHub release: ${result.releaseResult.url}`)
+
+        // Push commit + tag if requested
+        if (opts.push && result.nextVersion) {
+          const { GitClient } = await import('../../core/git-client.js')
+          const git = new GitClient()
+          const tagName = `v${result.nextVersion}`
+          try {
+            // Commit release artifacts
+            const { execSync } = await import('child_process')
+            execSync('git add package.json CHANGELOG.md .bumpcraft/', { stdio: 'pipe' })
+            execSync(`git commit -m "chore(release): ${result.nextVersion}"`, { stdio: 'pipe' })
+          } catch { /* nothing to commit */ }
+          try {
+            await git.createTag(tagName, `Release ${result.nextVersion}`)
+          } catch { /* tag may already exist from GitHub release */ }
+          await git.push()
+          await git.pushTag(tagName)
+          console.log(`Pushed commit and tag ${tagName} to remote`)
+        }
       } catch (e) {
         console.error(`Error: ${(e as Error).message}`)
         process.exit(1)

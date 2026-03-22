@@ -30,6 +30,7 @@ bumpcraft release [options]
 | `--force-bump <type>` | Override auto-detection. Force `major`, `minor`, or `patch` bump |
 | `--from <ref>` | Analyze commits from a specific git ref instead of the latest tag |
 | `-v, --verbose` | Show debug-level output |
+| `--push` | Commit release artifacts, create git tag, and push everything to remote |
 
 **Examples:**
 
