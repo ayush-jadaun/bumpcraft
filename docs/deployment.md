@@ -28,14 +28,20 @@ bumpcraft release         # run the full pipeline
 Add to your CI pipeline (GitHub Actions, GitLab CI, etc.):
 
 ```yaml
-# Example: GitHub Actions
+# Example: GitHub Actions — one line does everything
 - name: Release
-  run: npx bumpcraft release --approve
+  run: npx bumpcraft release --approve --push
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    GITHUB_REPOSITORY: ${{ github.repository }}
 ```
 
+That's it. `--push` handles committing, tagging, pushing, and creating a GitHub Release with full changelog. Both `GITHUB_TOKEN` and `GITHUB_REPOSITORY` are provided automatically by GitHub Actions — **no secrets to configure**.
+
+The only secret you need to add manually is `NPM_TOKEN` (if you want auto-publish to npm).
+
 Key flags for CI:
+- `--push` — commit release artifacts, tag, push, and create GitHub Release
 - `--approve` — bypasses `requireApproval` policies (needed in non-interactive environments)
 - `--dry-run` — preview without writing anything
 - `--force-bump <major|minor|patch>` — override auto-detection

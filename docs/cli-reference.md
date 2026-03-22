@@ -30,7 +30,23 @@ bumpcraft release [options]
 | `--force-bump <type>` | Override auto-detection. Force `major`, `minor`, or `patch` bump |
 | `--from <ref>` | Analyze commits from a specific git ref instead of the latest tag |
 | `-v, --verbose` | Show debug-level output |
-| `--push` | Commit release artifacts, create git tag, and push everything to remote |
+| `--push` | Commit release artifacts, create git tag, push to remote, and create GitHub release (see below) |
+
+### `--push` in detail
+
+When `--push` is used, bumpcraft handles the full release lifecycle:
+
+1. Bumps version in `package.json`
+2. Generates `CHANGELOG.md`
+3. Records release in `.bumpcraft/history.json`
+4. Commits all release artifacts (`package.json`, `CHANGELOG.md`, `.bumpcraft/`)
+5. Creates an annotated git tag (`v1.2.0`)
+6. Pushes the commit and tag to remote
+7. **Creates a GitHub Release** with the changelog as the body (if `GITHUB_TOKEN` is available)
+
+**GitHub Release creation is automatic** — if `GITHUB_TOKEN` and `GITHUB_REPOSITORY` environment variables are set, bumpcraft creates a GitHub Release with full release notes. In GitHub Actions, both are provided automatically. No manual secret setup needed.
+
+If you also have `bumpcraft-plugin-github` in your config, the plugin creates the release during the pipeline (step 3 above). The `--push` fallback only fires if the plugin didn't run.
 
 **Examples:**
 
@@ -52,6 +68,9 @@ bumpcraft release --pre-release beta
 
 # Release with verbose logging
 bumpcraft release -v
+
+# Full CI release — commit, tag, push, and create GitHub release
+bumpcraft release --approve --push
 
 # Override a policy block
 bumpcraft release --approve

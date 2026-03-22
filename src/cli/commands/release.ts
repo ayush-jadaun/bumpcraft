@@ -95,7 +95,11 @@ export function registerRelease(program: Command) {
         })
 
         console.log(`Released: ${result.nextVersion}`)
-        if (result.releaseResult?.url) console.log(`GitHub release: ${result.releaseResult.url}`)
+        if (result.releaseResult?.url) {
+          console.log(`GitHub release: ${result.releaseResult.url}`)
+        } else if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPOSITORY) {
+          console.log(`Tip: add "bumpcraft-plugin-github" to your .bumpcraftrc.json plugins to create GitHub releases with changelogs`)
+        }
 
         // Push commit + tag if requested
         if (opts.push && result.nextVersion) {
@@ -103,7 +107,6 @@ export function registerRelease(program: Command) {
           const git = new GitClient()
           const tagName = `v${result.nextVersion}`
           try {
-            // Commit release artifacts
             const { execSync } = await import('child_process')
             execSync('git add package.json CHANGELOG.md .bumpcraft/', { stdio: 'pipe' })
             execSync(`git commit -m "chore(release): ${result.nextVersion}"`, { stdio: 'pipe' })
@@ -114,6 +117,36 @@ export function registerRelease(program: Command) {
           await git.push()
           await git.pushTag(tagName)
           console.log(`Pushed commit and tag ${tagName} to remote`)
+
+          // If GitHub plugin didn't run but we have a token, create a GitHub release
+          // so the tag has proper release notes instead of being bare
+          if (!result.releaseResult?.url) {
+            const token = process.env.GITHUB_TOKEN
+            const repo = process.env.GITHUB_REPOSITORY
+            if (token && repo) {
+              try {
+                const res = await fetch(`https://api.github.com/repos/${repo}/releases`, {
+                  method: 'POST',
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'bumpcraft'
+                  },
+                  body: JSON.stringify({
+                    tag_name: tagName,
+                    name: tagName,
+                    body: result.changelogOutput ?? '',
+                    draft: false,
+                    prerelease: false
+                  })
+                })
+                if (res.ok) {
+                  const data = await res.json() as { html_url: string }
+                  console.log(`GitHub release: ${data.html_url}`)
+                }
+              } catch { /* best-effort */ }
+            }
+          }
         }
       } catch (e) {
         console.error(`Error: ${(e as Error).message}`)
