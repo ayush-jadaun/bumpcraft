@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.2.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.2.0) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.1.2...v1.2.0))
+
+### 🚀 Features
+
+- add init-release command for baseline tagging ([c1fba98](https://github.com/ayush-jadaun/bumpcraft/commit/c1fba983ed3501c1feed4d351c1dcd2ff4ceb389))
+
+### 📚 Documentation
+
+- add llms.txt for AI agent context, include in npm package ([8593b40](https://github.com/ayush-jadaun/bumpcraft/commit/8593b406337bc2af0e858d9d6084ae54d373b74e))
+
+### ci
+
+- skip CI on docs-only changes (README, docs/, examples/, LICENSE) ([a5874e0](https://github.com/ayush-jadaun/bumpcraft/commit/a5874e06e3da7ba4d8983ed4165e9b2b1c151633))
+
 ## [1.1.2](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.1.2) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.1.1...v1.1.2))
 
 ### 🐛 Bug Fixes

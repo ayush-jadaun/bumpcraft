@@ -1,5 +1,49 @@
 [
   {
+    "version": "1.2.0",
+    "previousVersion": "1.1.2",
+    "date": "2026-03-22T14:18:50.496Z",
+    "commits": [
+      {
+        "hash": "c1fba983ed3501c1feed4d351c1dcd2ff4ceb389",
+        "type": "feat",
+        "scope": null,
+        "subject": "add init-release command for baseline tagging",
+        "body": "Allows existing projects to adopt bumpcraft from a clean slate:\n  bumpcraft init-release --version 1.0.0\n\nCreates a git tag, updates package.json, records in release history.\nFuture releases only look at commits after the baseline tag.\n\nOptions: --force (overwrite tag), --allow-dirty, --message, --no-commit",
+        "breaking": false,
+        "raw": "c1fba983ed3501c1feed4d351c1dcd2ff4ceb389 feat: add init-release command for baseline tagging\nAllows existing projects to adopt bumpcraft from a clean slate:\n  bumpcraft init-release --version 1.0.0\n\nCreates a git tag, updates package.json, records in release history.\nFuture releases only look at commits after the baseline tag.\n\nOptions: --force (overwrite tag), --allow-dirty, --message, --no-commit"
+      },
+      {
+        "hash": "8593b406337bc2af0e858d9d6084ae54d373b74e",
+        "type": "docs",
+        "scope": null,
+        "subject": "add llms.txt for AI agent context, include in npm package",
+        "body": null,
+        "breaking": false,
+        "raw": "8593b406337bc2af0e858d9d6084ae54d373b74e docs: add llms.txt for AI agent context, include in npm package"
+      },
+      {
+        "hash": "a5874e06e3da7ba4d8983ed4165e9b2b1c151633",
+        "type": "ci",
+        "scope": null,
+        "subject": "skip CI on docs-only changes (README, docs/, examples/, LICENSE)",
+        "body": null,
+        "breaking": false,
+        "raw": "a5874e06e3da7ba4d8983ed4165e9b2b1c151633 ci: skip CI on docs-only changes (README, docs/, examples/, LICENSE)"
+      },
+      {
+        "hash": "14589bda0691084dcfd170215da40b83ea0023ce",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.1.2",
+        "body": null,
+        "breaking": false,
+        "raw": "14589bda0691084dcfd170215da40b83ea0023ce chore(release): 1.1.2"
+      }
+    ],
+    "changelogOutput": "## [1.2.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.2.0) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.1.2...v1.2.0))\n\n### 🚀 Features\n\n- add init-release command for baseline tagging ([c1fba98](https://github.com/ayush-jadaun/bumpcraft/commit/c1fba983ed3501c1feed4d351c1dcd2ff4ceb389))\n\n### 📚 Documentation\n\n- add llms.txt for AI agent context, include in npm package ([8593b40](https://github.com/ayush-jadaun/bumpcraft/commit/8593b406337bc2af0e858d9d6084ae54d373b74e))\n\n### ci\n\n- skip CI on docs-only changes (README, docs/, examples/, LICENSE) ([a5874e0](https://github.com/ayush-jadaun/bumpcraft/commit/a5874e06e3da7ba4d8983ed4165e9b2b1c151633))\n"
+  },
+  {
     "version": "1.1.2",
     "previousVersion": "1.1.1",
     "date": "2026-03-22T13:59:55.177Z",
