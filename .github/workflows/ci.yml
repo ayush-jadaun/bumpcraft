@@ -4,8 +4,20 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - 'examples/**'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - 'examples/**'
+      - 'LICENSE'
+      - '.github/ISSUE_TEMPLATE/**'
 
 permissions:
   contents: write
