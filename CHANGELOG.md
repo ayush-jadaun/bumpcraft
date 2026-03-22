@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.2](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.1.2) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.1.1...v1.1.2))
+
+### 🐛 Bug Fixes
+
+- CI release — fetch tags, create local git tag, fix exit code capture ([1be68d6](https://github.com/ayush-jadaun/bumpcraft/commit/1be68d610d86541a20d9aa43c709cb3dc5535693))
+
 ## [1.1.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.1.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.1.0...v1.1.1))
 
 ### 🐛 Bug Fixes

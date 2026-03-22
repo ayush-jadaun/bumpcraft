@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.1.2",
+    "previousVersion": "1.1.1",
+    "date": "2026-03-22T13:59:55.177Z",
+    "commits": [
+      {
+        "hash": "1be68d610d86541a20d9aa43c709cb3dc5535693",
+        "type": "fix",
+        "scope": null,
+        "subject": "CI release — fetch tags, create local git tag, fix exit code capture",
+        "body": "- Explicitly fetch all tags with --force before validate\n- Create local git tag after release (bumpcraft only creates GitHub release)\n- Fix validate exit code capture using || block instead of if/else\n- npm publish conditional on HAS_NPM_TOKEN",
+        "breaking": false,
+        "raw": "1be68d610d86541a20d9aa43c709cb3dc5535693 fix: CI release — fetch tags, create local git tag, fix exit code capture\n- Explicitly fetch all tags with --force before validate\n- Create local git tag after release (bumpcraft only creates GitHub release)\n- Fix validate exit code capture using || block instead of if/else\n- npm publish conditional on HAS_NPM_TOKEN"
+      },
+      {
+        "hash": "66a9a55962cbb9c8971331daaa6d919f1cdde74d",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.1.1",
+        "body": null,
+        "breaking": false,
+        "raw": "66a9a55962cbb9c8971331daaa6d919f1cdde74d chore(release): 1.1.1"
+      }
+    ],
+    "changelogOutput": "## [1.1.2](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.1.2) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.1.1...v1.1.2))\n\n### 🐛 Bug Fixes\n\n- CI release — fetch tags, create local git tag, fix exit code capture ([1be68d6](https://github.com/ayush-jadaun/bumpcraft/commit/1be68d610d86541a20d9aa43c709cb3dc5535693))\n"
+  },
+  {
     "version": "1.1.1",
     "previousVersion": "1.1.0",
     "date": "2026-03-22T13:54:34.524Z",
