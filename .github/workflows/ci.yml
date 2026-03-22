@@ -32,13 +32,15 @@ jobs:
   release:
     needs: test
     runs-on: ubuntu-latest
-    # Only release on direct pushes to main, skip if the commit is from the bot (prevents infinite loop)
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'chore(release)')
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Fetch all tags explicitly
+      - run: git fetch --tags --force
 
       - uses: actions/setup-node@v4
         with:
@@ -49,22 +51,20 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      # Check if there are releasable commits since last tag
+      # Check if there are releasable commits
       - name: Check for release
         id: check
         run: |
-          if node dist/cli/index.js validate; then
-            echo "release=true" >> $GITHUB_OUTPUT
-          else
-            EXIT_CODE=$?
-            if [ $EXIT_CODE -eq 2 ]; then
-              echo "No releasable commits found"
+          node dist/cli/index.js validate && echo "release=true" >> $GITHUB_OUTPUT || {
+            code=$?
+            if [ $code -eq 2 ]; then
+              echo "No releasable commits — skipping release"
               echo "release=false" >> $GITHUB_OUTPUT
             else
-              echo "Validate failed with exit code $EXIT_CODE"
-              exit $EXIT_CODE
+              echo "Validate failed with code $code"
+              exit $code
             fi
-          fi
+          }
 
       # Run bumpcraft on itself
       - name: Release
@@ -75,16 +75,23 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
           node dist/cli/index.js release --approve
+
+          # Create a local git tag (bumpcraft writes package.json but not a local tag)
+          VERSION=$(node -p "require('./package.json').version")
+          git tag "v${VERSION}" || true
+
+          # Commit release artifacts
           git add package.json CHANGELOG.md .bumpcraft/
-          git commit -m "chore(release): $(node -p "require('./package.json').version")" || true
+          git commit -m "chore(release): ${VERSION}" || true
           git push
           git push --tags
 
       # Publish to npm (only if NPM_TOKEN is configured)
       - name: Publish to npm
-        if: steps.check.outputs.release == 'true' && env.NPM_TOKEN != ''
+        if: steps.check.outputs.release == 'true' && env.HAS_NPM_TOKEN == 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          HAS_NPM_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
         run: npm publish
