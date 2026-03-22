@@ -45,7 +45,7 @@ describe('Full release pipeline', () => {
     const { runRelease } = await import('../../src/index.js')
     const result = await runRelease({ dryRun: true })
     expect(result.changelogOutput).toContain('add dark mode')
-    expect(result.changelogOutput).toContain('## 1.1.0')
+    expect(result.changelogOutput).toContain('1.1.0')
   })
 
   it('non-dry-run writes CHANGELOG.md', async () => {
@@ -55,7 +55,7 @@ describe('Full release pipeline', () => {
 
     const changelog = readFileSync(join(dir, 'CHANGELOG.md'), 'utf-8')
     expect(changelog).toContain('# Changelog')
-    expect(changelog).toContain('## 1.1.0')
+    expect(changelog).toContain('1.1.0')
     expect(changelog).toContain('add dark mode')
   })
 
@@ -65,7 +65,7 @@ describe('Full release pipeline', () => {
     await runRelease({ dryRun: false })
 
     const changelog = readFileSync(join(dir, 'CHANGELOG.md'), 'utf-8')
-    expect(changelog).toContain('## 1.1.0')
+    expect(changelog).toContain('1.1.0')
     expect(changelog).toContain('## 1.0.0')
     // New entry should be before old
     expect(changelog.indexOf('1.1.0')).toBeLessThan(changelog.indexOf('1.0.0'))

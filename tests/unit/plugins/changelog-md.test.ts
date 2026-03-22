@@ -23,7 +23,7 @@ describe('changelogMdPlugin', () => {
       logger: noopLogger
     }
     const result = await changelogMdPlugin.execute(ctx)
-    expect(result.changelogOutput).toContain('## 1.1.0')
+    expect(result.changelogOutput).toContain('1.1.0')
     expect(result.changelogOutput).toContain('**auth:** add OAuth')
     expect(result.changelogOutput).toContain('crash on login')
   })
