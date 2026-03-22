@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.3.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.3.0...v1.3.1))
+
+### 🐛 Bug Fixes
+
+- performance and robustness hardening ([57f1a28](https://github.com/ayush-jadaun/bumpcraft/commit/57f1a28cf45ab1fc55d222561b393e3e8f1d739d))
+
+### ✅ Tests
+
+- add edge case tests for all untested scenarios (132 total) ([5e3a792](https://github.com/ayush-jadaun/bumpcraft/commit/5e3a792762add2788f598971d0685269c607f03e))
+- comprehensive edge case tests for all failure scenarios ([f601836](https://github.com/ayush-jadaun/bumpcraft/commit/f601836bf7a96d6c101800229870f86f5c12555c))
+
 ## [1.3.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.3.0) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.2.2...v1.3.0))
 
 ### 🚀 Features

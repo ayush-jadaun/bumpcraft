@@ -1,5 +1,49 @@
 [
   {
+    "version": "1.3.1",
+    "previousVersion": "1.3.0",
+    "date": "2026-03-22T16:36:42.452Z",
+    "commits": [
+      {
+        "hash": "57f1a28cf45ab1fc55d222561b393e3e8f1d739d",
+        "type": "fix",
+        "scope": null,
+        "subject": "performance and robustness hardening",
+        "body": "Performance:\n- Cap first-release commit scan to 500 (prevents OOM on large repos\n  with no tags). Repos with tags are unaffected.\n\nCorrectness:\n- Commit hash regex now accepts uppercase hex [A-F] (some git configs\n  and tools output uppercase hashes)\n- Shallow clone detection: warns when fetch-depth is 1 in CI\n- Dirty working tree warning on non-dry-run releases\n- Tests for uppercase and mixed-case hex hashes (134 total)",
+        "breaking": false,
+        "raw": "57f1a28cf45ab1fc55d222561b393e3e8f1d739d fix: performance and robustness hardening\nPerformance:\n- Cap first-release commit scan to 500 (prevents OOM on large repos\n  with no tags). Repos with tags are unaffected.\n\nCorrectness:\n- Commit hash regex now accepts uppercase hex [A-F] (some git configs\n  and tools output uppercase hashes)\n- Shallow clone detection: warns when fetch-depth is 1 in CI\n- Dirty working tree warning on non-dry-run releases\n- Tests for uppercase and mixed-case hex hashes (134 total)"
+      },
+      {
+        "hash": "5e3a792762add2788f598971d0685269c607f03e",
+        "type": "test",
+        "scope": null,
+        "subject": "add edge case tests for all untested scenarios (132 total)",
+        "body": "SemVer:\n- Large version numbers (99.99.99, 999.0.0)\n- Build metadata parsing, serialization, and stripping on bump\n- Pre-release < release comparison\n- Numeric < alphanumeric pre-release (spec §11.4.1)\n- Build metadata ignored in comparison\n- Fewer pre-release fields < more fields\n- Tag switching resets counter\n- Empty string and whitespace handling\n\nCommit parsing:\n- Squash merge with PR number: feat: thing (#42)\n- Emoji in commit subject\n- Extra whitespace trimming\n- Garbage/partial input gracefully skipped\n\nIntegration:\n- GitHub plugin skips silently without GITHUB_TOKEN\n- Squash merge commits parsed end-to-end\n- Build metadata round-trip\n- 50 commits performance test\n- init-release idempotency",
+        "breaking": false,
+        "raw": "5e3a792762add2788f598971d0685269c607f03e test: add edge case tests for all untested scenarios (132 total)\nSemVer:\n- Large version numbers (99.99.99, 999.0.0)\n- Build metadata parsing, serialization, and stripping on bump\n- Pre-release < release comparison\n- Numeric < alphanumeric pre-release (spec §11.4.1)\n- Build metadata ignored in comparison\n- Fewer pre-release fields < more fields\n- Tag switching resets counter\n- Empty string and whitespace handling\n\nCommit parsing:\n- Squash merge with PR number: feat: thing (#42)\n- Emoji in commit subject\n- Extra whitespace trimming\n- Garbage/partial input gracefully skipped\n\nIntegration:\n- GitHub plugin skips silently without GITHUB_TOKEN\n- Squash merge commits parsed end-to-end\n- Build metadata round-trip\n- 50 commits performance test\n- init-release idempotency"
+      },
+      {
+        "hash": "f601836bf7a96d6c101800229870f86f5c12555c",
+        "type": "test",
+        "scope": null,
+        "subject": "comprehensive edge case tests for all failure scenarios",
+        "body": "- Commit parsing: feat!, BREAKING CHANGE in body, non-conventional,\n  empty, merge commits, scoped with slashes, Co-Authored-By trailers,\n  multiple feat commits, mixed types, all-chore\n- Config: missing file, malformed JSON, invalid freezeAfter, valid freezeAfter\n- First release: no tags exist, bumps from package.json version\n- Changelog: created when missing, prepends without destroying old entries\n- Version: 0.0.0 start, pre-release, force-bump with chore-only commits\n- History: corrupted history.json doesn't crash release\n- Force bump: invalid value ignored, falls back to commit-based bump\n- 108 total tests (was 79)",
+        "breaking": false,
+        "raw": "f601836bf7a96d6c101800229870f86f5c12555c test: comprehensive edge case tests for all failure scenarios\n- Commit parsing: feat!, BREAKING CHANGE in body, non-conventional,\n  empty, merge commits, scoped with slashes, Co-Authored-By trailers,\n  multiple feat commits, mixed types, all-chore\n- Config: missing file, malformed JSON, invalid freezeAfter, valid freezeAfter\n- First release: no tags exist, bumps from package.json version\n- Changelog: created when missing, prepends without destroying old entries\n- Version: 0.0.0 start, pre-release, force-bump with chore-only commits\n- History: corrupted history.json doesn't crash release\n- Force bump: invalid value ignored, falls back to commit-based bump\n- 108 total tests (was 79)"
+      },
+      {
+        "hash": "7bc5fbc581ae0593a3ca1873ea0ef6ba17d70e89",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.3.0",
+        "body": null,
+        "breaking": false,
+        "raw": "7bc5fbc581ae0593a3ca1873ea0ef6ba17d70e89 chore(release): 1.3.0"
+      }
+    ],
+    "changelogOutput": "## [1.3.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.3.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.3.0...v1.3.1))\n\n### 🐛 Bug Fixes\n\n- performance and robustness hardening ([57f1a28](https://github.com/ayush-jadaun/bumpcraft/commit/57f1a28cf45ab1fc55d222561b393e3e8f1d739d))\n\n### ✅ Tests\n\n- add edge case tests for all untested scenarios (132 total) ([5e3a792](https://github.com/ayush-jadaun/bumpcraft/commit/5e3a792762add2788f598971d0685269c607f03e))\n- comprehensive edge case tests for all failure scenarios ([f601836](https://github.com/ayush-jadaun/bumpcraft/commit/f601836bf7a96d6c101800229870f86f5c12555c))\n"
+  },
+  {
     "version": "1.3.0",
     "previousVersion": "1.2.2",
     "date": "2026-03-22T16:25:49.554Z",
