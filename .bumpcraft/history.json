@@ -1,5 +1,40 @@
 [
   {
+    "version": "1.5.3",
+    "previousVersion": "1.5.2",
+    "date": "2026-03-23T20:46:50.778Z",
+    "commits": [
+      {
+        "hash": "5cb7f32dfd96650b9c27e747861933a8cab424d0",
+        "type": "fix",
+        "scope": null,
+        "subject": "add verbose logging to monorepo release for debugging",
+        "body": "Run 'bumpcraft release --verbose' to see:\n- How many commits found since last tag\n- Per-package matching commit count\n- Pipeline bumpType/nextVersion result per package\n- Which packages are skipped and why",
+        "breaking": false,
+        "raw": "5cb7f32dfd96650b9c27e747861933a8cab424d0 fix: add verbose logging to monorepo release for debugging\nRun 'bumpcraft release --verbose' to see:\n- How many commits found since last tag\n- Per-package matching commit count\n- Pipeline bumpType/nextVersion result per package\n- Which packages are skipped and why"
+      },
+      {
+        "hash": "5133c5f2c8bda3f58f8cf86aa23564fe6c43ed0a",
+        "type": "docs",
+        "scope": null,
+        "subject": "add npm downloads badge to README",
+        "body": null,
+        "breaking": false,
+        "raw": "5133c5f2c8bda3f58f8cf86aa23564fe6c43ed0a docs: add npm downloads badge to README"
+      },
+      {
+        "hash": "30a4c8d4ec363327f5901146d3010a8b021c984a",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.5.2 [skip ci]",
+        "body": null,
+        "breaking": false,
+        "raw": "30a4c8d4ec363327f5901146d3010a8b021c984a chore(release): 1.5.2 [skip ci]"
+      }
+    ],
+    "changelogOutput": "## [1.5.3](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.3) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.2...v1.5.3))\n\n### 🐛 Bug Fixes\n\n- add verbose logging to monorepo release for debugging ([5cb7f32](https://github.com/ayush-jadaun/bumpcraft/commit/5cb7f32dfd96650b9c27e747861933a8cab424d0))\n\n### 📚 Documentation\n\n- add npm downloads badge to README ([5133c5f](https://github.com/ayush-jadaun/bumpcraft/commit/5133c5f2c8bda3f58f8cf86aa23564fe6c43ed0a))\n"
+  },
+  {
     "version": "1.5.2",
     "previousVersion": "1.5.1",
     "date": "2026-03-23T20:24:54.970Z",

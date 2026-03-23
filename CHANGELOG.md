@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.5.3](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.3) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.2...v1.5.3))
+
+### 🐛 Bug Fixes
+
+- add verbose logging to monorepo release for debugging ([5cb7f32](https://github.com/ayush-jadaun/bumpcraft/commit/5cb7f32dfd96650b9c27e747861933a8cab424d0))
+
+### 📚 Documentation
+
+- add npm downloads badge to README ([5133c5f](https://github.com/ayush-jadaun/bumpcraft/commit/5133c5f2c8bda3f58f8cf86aa23564fe6c43ed0a))
+
 ## [1.5.2](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.2) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.1...v1.5.2))
 
 ### 🐛 Bug Fixes
