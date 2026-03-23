@@ -15,6 +15,7 @@ import type { PipelineContext, BumpType } from './pipeline/types.js'
 import { join } from 'path'
 import { readFile, writeFile, rename } from 'fs/promises'
 import { runHook } from './core/hooks.js'
+import { readChangesets, consumeChangesets } from './core/changeset-files.js'
 
 export { SemVer } from './core/semver.js'
 export { BumpcraftError, ErrorCode } from './core/errors.js'
@@ -140,6 +141,37 @@ export async function runRelease(options: ReleaseOptions = {}) {
   const runner = new PipelineRunner([...plugins, nextVersionPlugin])
   ctx = await runner.run(ctx)
 
+  // Check changeset files — they can upgrade the bump type even when commits produce 'none'
+  const changesets = await readChangesets()
+  if (changesets.length > 0) {
+    const PRIORITY: Record<string, number> = { none: 0, patch: 1, minor: 2, major: 3 }
+    let changesetBump: BumpType = 'none'
+    const changesetSummaries: string[] = []
+    for (const cs of changesets) {
+      for (const bump of Object.values(cs.packages)) {
+        if ((PRIORITY[bump] ?? 0) > (PRIORITY[changesetBump] ?? 0)) {
+          changesetBump = bump as BumpType
+        }
+      }
+      changesetSummaries.push(cs.summary)
+    }
+
+    if ((PRIORITY[changesetBump] ?? 0) > (PRIORITY[ctx.bumpType] ?? 0)) {
+      // Changeset files request a higher bump than commits
+      let next = currentVersion
+      if (changesetBump === 'major') next = currentVersion.bumpMajor()
+      else if (changesetBump === 'minor') next = currentVersion.bumpMinor()
+      else next = currentVersion.bumpPatch()
+      if (options.preRelease) next = next.bumpPreRelease(options.preRelease)
+      ctx = { ...ctx, bumpType: changesetBump, nextVersion: next }
+    }
+
+    // Append changeset summaries to changelog
+    if (changesetSummaries.length > 0 && ctx.changelogOutput) {
+      ctx = { ...ctx, changelogOutput: ctx.changelogOutput + '\n### Changesets\n\n' + changesetSummaries.map(s => `- ${s}`).join('\n') + '\n' }
+    }
+  }
+
   if (ctx.bumpType === 'none' && !forceBump) {
     return { bumpType: 'none' as BumpType, currentVersion: currentVersion.toString(), nextVersion: null, changelogOutput: null, releaseResult: null, dryRun: options.dryRun ?? false }
   }
@@ -179,6 +211,10 @@ export async function runRelease(options: ReleaseOptions = {}) {
       const tmp = `${changelogPath}.tmp`
       await writeFile(tmp, `${header}${ctx.changelogOutput}\n${body}`, 'utf-8')
       await rename(tmp, changelogPath)
+    }
+    // Consume changeset files after successful release
+    if (changesets.length > 0) {
+      await consumeChangesets()
     }
     runHook(config, 'afterRelease', logger, hookEnv)
   }

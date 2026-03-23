@@ -47,6 +47,8 @@ npx bumpcraft release
 - [Dashboard](docs/dashboard.md)
 - [Monorepo Support](docs/monorepo.md)
 - [Publishing](docs/publishing.md)
+- [Changeset Files](docs/changesets.md)
+- [Version PR Mode](docs/version-pr.md)
 - [Lifecycle Hooks](docs/hooks.md)
 - [Docker Deployment](docs/docker.md)
 - [Deployment Guide](docs/deployment.md)

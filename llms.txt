@@ -134,6 +134,9 @@ docs: update readme        → no bump
 | `bumpcraft release -i` | Interactive mode |
 | `bumpcraft release --approve` | Override policy blocks |
 | `bumpcraft release --push` | Commit [skip ci], tag, push, and create GitHub Release (auto if GITHUB_TOKEN set) |
+| `bumpcraft release --create-pr` | Create a "Version Packages" PR for review instead of pushing directly |
+| `bumpcraft changeset create` | Create a .changeset/*.md file to declare a version bump |
+| `bumpcraft changeset list` | List pending changeset files |
 | `bumpcraft validate` | Preview (alias for --dry-run) |
 | `bumpcraft version` | Show current version |
 | `bumpcraft changelog` | Generate changelog only |
@@ -225,6 +228,23 @@ Env vars: BUMPCRAFT_VERSION, BUMPCRAFT_PREV_VERSION, BUMPCRAFT_BUMP_TYPE
 ```
 
 Placeholders: {version}, {date}, {commits}, {previousVersion}
+
+## Changeset Files
+
+Create `.changeset/*.md` files to manually declare version bumps. Works alongside commit-based detection — highest bump wins. Files are deleted after a successful release.
+
+```markdown
+---
+"auth": minor
+"api": patch
+---
+
+Add OAuth support and fix API timeout.
+```
+
+## Version PR Mode
+
+`bumpcraft release --create-pr` creates a GitHub PR instead of pushing directly. The PR includes the version bump, changelog, and release artifacts for team review before merging. Requires GITHUB_TOKEN and GITHUB_REPOSITORY.
 
 ## Writing a Plugin
 

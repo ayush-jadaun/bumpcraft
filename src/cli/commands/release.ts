@@ -21,6 +21,7 @@ export function registerRelease(program: Command) {
     .option('--from <ref>', 'Analyze commits from this ref')
     .option('-v, --verbose', 'Verbose output')
     .option('--push', 'Push the commit and tag to remote after release')
+    .option('--create-pr', 'Create a "Version Packages" PR instead of pushing directly')
     .option('--package <name>', 'Release a specific monorepo package')
     .action(async (opts) => {
       try {
@@ -192,6 +193,75 @@ export function registerRelease(program: Command) {
               } catch { /* best-effort */ }
             }
           }
+        }
+
+        // Create PR instead of pushing directly
+        if (opts.createPr && result.nextVersion) {
+          const token = process.env.GITHUB_TOKEN
+          const repo = process.env.GITHUB_REPOSITORY
+          if (!token || !repo) {
+            console.error('--create-pr requires GITHUB_TOKEN and GITHUB_REPOSITORY env vars')
+            process.exit(1)
+          }
+
+          const { execSync } = await import('child_process')
+          const branchName = `bumpcraft/release-v${result.nextVersion}`
+
+          try {
+            execSync(`git checkout -b "${branchName}"`, { stdio: 'pipe' })
+            execSync('git add package.json CHANGELOG.md .bumpcraft/ .changeset/', { stdio: 'pipe' })
+            execSync(`git commit -m "chore(release): v${result.nextVersion}"`, { stdio: 'pipe' })
+            execSync(`git push origin "${branchName}"`, { stdio: 'pipe' })
+          } catch { /* nothing to commit or push */ }
+
+          // Get the default branch
+          let baseBranch = 'main'
+          try {
+            baseBranch = execSync('git rev-parse --abbrev-ref HEAD@{upstream}', { stdio: 'pipe' }).toString().trim().split('/').pop() ?? 'main'
+          } catch {
+            try {
+              const res = await fetch(`https://api.github.com/repos/${repo}`, {
+                headers: { Authorization: `Bearer ${token}`, 'User-Agent': 'bumpcraft' }
+              })
+              if (res.ok) {
+                const data = await res.json() as { default_branch: string }
+                baseBranch = data.default_branch
+              }
+            } catch { /* fallback to main */ }
+          }
+
+          // Create the PR
+          try {
+            const prBody = `## Version Packages\n\nThis PR was created by \`bumpcraft release --create-pr\`.\n\n**Version:** ${result.nextVersion}\n**Bump:** ${result.bumpType}\n\n### Changelog\n\n${result.changelogOutput ?? 'No changelog generated.'}`
+
+            const res = await fetch(`https://api.github.com/repos/${repo}/pulls`, {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'User-Agent': 'bumpcraft'
+              },
+              body: JSON.stringify({
+                title: `chore(release): v${result.nextVersion}`,
+                body: prBody,
+                head: branchName,
+                base: baseBranch
+              })
+            })
+
+            if (res.ok) {
+              const data = await res.json() as { html_url: string }
+              console.log(`Version PR created: ${data.html_url}`)
+            } else {
+              const err = await res.json() as { message: string }
+              console.error(`Failed to create PR: ${res.status} — ${err.message}`)
+            }
+          } catch (e) {
+            console.error(`Failed to create PR: ${(e as Error).message}`)
+          }
+
+          // Switch back to the original branch
+          try { execSync('git checkout -', { stdio: 'pipe' }) } catch { /* */ }
         }
       } catch (e) {
         console.error(`Error: ${(e as Error).message}`)
