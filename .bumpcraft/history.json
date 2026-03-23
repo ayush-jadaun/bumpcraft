@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.5.1",
+    "previousVersion": "1.5.0",
+    "date": "2026-03-23T20:04:46.812Z",
+    "commits": [
+      {
+        "hash": "b5a93e61ffb2636c7cb201443d8597479809186a",
+        "type": "fix",
+        "scope": null,
+        "subject": "validate and changelog commands now monorepo-aware",
+        "body": "Bug: bumpcraft validate called runRelease() (single-package) even in\nmonorepo mode, which reads root package.json instead of per-package\nversions. Unscoped feat: commits were processed but the root version\nwas already up-to-date, so it reported 'no release needed'.\n\nFix: validate and changelog commands now check config.monorepo and\ncall runMonorepoRelease() when in monorepo mode, matching the\nbehavior of the release command.",
+        "breaking": false,
+        "raw": "b5a93e61ffb2636c7cb201443d8597479809186a fix: validate and changelog commands now monorepo-aware\nBug: bumpcraft validate called runRelease() (single-package) even in\nmonorepo mode, which reads root package.json instead of per-package\nversions. Unscoped feat: commits were processed but the root version\nwas already up-to-date, so it reported 'no release needed'.\n\nFix: validate and changelog commands now check config.monorepo and\ncall runMonorepoRelease() when in monorepo mode, matching the\nbehavior of the release command."
+      },
+      {
+        "hash": "883a9c425fc0fb234d3a6e23b96326724c88431a",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.5.0 [skip ci]",
+        "body": null,
+        "breaking": false,
+        "raw": "883a9c425fc0fb234d3a6e23b96326724c88431a chore(release): 1.5.0 [skip ci]"
+      }
+    ],
+    "changelogOutput": "## [1.5.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.1) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.0...v1.5.1))\n\n### 🐛 Bug Fixes\n\n- validate and changelog commands now monorepo-aware ([b5a93e6](https://github.com/ayush-jadaun/bumpcraft/commit/b5a93e61ffb2636c7cb201443d8597479809186a))\n"
+  },
+  {
     "version": "1.5.0",
     "previousVersion": "1.4.1",
     "date": "2026-03-23T15:44:16.201Z",

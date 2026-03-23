@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.1) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.0...v1.5.1))
+
+### 🐛 Bug Fixes
+
+- validate and changelog commands now monorepo-aware ([b5a93e6](https://github.com/ayush-jadaun/bumpcraft/commit/b5a93e61ffb2636c7cb201443d8597479809186a))
+
 ## [1.5.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.0) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.4.1...v1.5.0))
 
 ### 🚀 Features
