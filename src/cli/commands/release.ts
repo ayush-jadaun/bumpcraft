@@ -21,11 +21,54 @@ export function registerRelease(program: Command) {
     .option('--from <ref>', 'Analyze commits from this ref')
     .option('-v, --verbose', 'Verbose output')
     .option('--push', 'Push the commit and tag to remote after release')
+    .option('--package <name>', 'Release a specific monorepo package')
     .action(async (opts) => {
       try {
         if (opts.forceBump && !VALID_BUMPS.includes(opts.forceBump)) {
           console.error(`--force-bump must be one of: ${VALID_BUMPS.join(', ')}`)
           process.exit(1)
+        }
+
+        // Monorepo mode
+        const config = await loadConfig('.bumpcraftrc.json')
+        if (config.monorepo) {
+          const { runMonorepoRelease } = await import('../../index.js')
+          const results = await runMonorepoRelease({
+            dryRun: opts.dryRun,
+            preRelease: opts.preRelease,
+            forceBump: opts.forceBump,
+            from: opts.from,
+            verbose: opts.verbose,
+            package: opts.package
+          })
+
+          if (!results.length) {
+            console.log('No packages to release.')
+            process.exit(2)
+          }
+
+          for (const r of results) {
+            console.log(`${r.package}: ${r.currentVersion} → ${r.nextVersion} (${r.bumpType})`)
+          }
+
+          if (opts.push && !opts.dryRun) {
+            const { GitClient } = await import('../../core/git-client.js')
+            const git = new GitClient()
+            const { execSync } = await import('child_process')
+            try {
+              execSync('git add -A', { stdio: 'pipe' })
+              const names = results.map(r => `${r.package}@${r.nextVersion}`).join(', ')
+              execSync(`git commit -m "chore(release): ${names} [skip ci]"`, { stdio: 'pipe' })
+            } catch { /* nothing to commit */ }
+            await git.push()
+            try {
+              for (const r of results) {
+                await git.pushTag(`${r.package}@${r.nextVersion}`).catch(() => {})
+              }
+            } catch { /* */ }
+            console.log('Pushed all changes and tags to remote')
+          }
+          return
         }
 
         const config = await loadConfig('.bumpcraftrc.json')

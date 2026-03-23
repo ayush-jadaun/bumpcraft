@@ -7,7 +7,13 @@ const PluginEntrySchema = z.union([
   z.tuple([z.string(), z.record(z.string(), z.unknown())])
 ])
 
+const MonorepoPackageSchema = z.object({
+  path: z.string(),
+  tagFormat: z.string().optional()
+})
+
 const ConfigSchema = z.object({
+  monorepo: z.record(z.string(), MonorepoPackageSchema).nullable().default(null),
   versionSource: z.enum(['package.json', 'git-tag']).default('package.json'),
   plugins: z.array(PluginEntrySchema).default([]),
   branches: z.object({

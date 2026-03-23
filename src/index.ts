@@ -34,6 +34,15 @@ export interface ReleaseOptions {
   verbose?: boolean
   overrideChangelog?: string
   _rawCommitsOverride?: string[]
+  package?: string  // monorepo: release a specific package
+}
+
+export interface MonorepoReleaseResult {
+  package: string
+  bumpType: BumpType
+  currentVersion: string
+  nextVersion: string | null
+  changelogOutput: string | null
 }
 
 const VALID_BUMPS = ['major', 'minor', 'patch']
@@ -176,6 +185,164 @@ export async function runRelease(options: ReleaseOptions = {}) {
 
 export async function runReleaseWithCommits(rawCommits: string[], options: ReleaseOptions = {}) {
   return runRelease({ ...options, _rawCommitsOverride: rawCommits })
+}
+
+export async function runMonorepoRelease(options: ReleaseOptions = {}): Promise<MonorepoReleaseResult[]> {
+  const config = await loadConfig(options.configPath ?? '.bumpcraftrc.json')
+  const logger = new ConsoleLogger(options.verbose)
+
+  if (!config.monorepo) {
+    throw new BumpcraftError(ErrorCode.CONFIG_ERROR, 'monorepo is not configured in .bumpcraftrc.json')
+  }
+
+  const git = new GitClient()
+  const latestTag = await git.getLatestTag()
+  const ref = options.from ?? latestTag
+  const allCommits = options._rawCommitsOverride ?? await git.getCommitsSince(ref)
+
+  // Parse all commits to extract scopes
+  const parsedAll = allCommits.map(raw => {
+    const match = /^[a-fA-F0-9]+\s+\w+\(([^)]+)\)/.exec(raw.split('\n')[0])
+    return { raw, scope: match?.[1] ?? null }
+  })
+
+  const packages = options.package
+    ? { [options.package]: config.monorepo[options.package] }
+    : config.monorepo
+
+  if (options.package && !config.monorepo[options.package]) {
+    throw new BumpcraftError(ErrorCode.CONFIG_ERROR, `Package "${options.package}" not found in monorepo config`)
+  }
+
+  const results: MonorepoReleaseResult[] = []
+
+  const plugins = config.plugins.map(p => {
+    const name = Array.isArray(p) ? p[0] : p
+    return BUILT_IN_PLUGINS[name as keyof typeof BUILT_IN_PLUGINS]
+  }).filter(Boolean)
+
+  const forceBump = options.forceBump && VALID_BUMPS.includes(options.forceBump)
+    ? options.forceBump as BumpType
+    : undefined
+
+  for (const [pkgName, pkgConfig] of Object.entries(packages)) {
+    if (!pkgConfig) continue
+
+    // Filter commits: scoped to this package OR unscoped (global)
+    const pkgCommits = parsedAll
+      .filter(c => c.scope === pkgName || c.scope === null)
+      .map(c => c.raw)
+
+    if (!pkgCommits.length && !forceBump) {
+      continue
+    }
+
+    const tagFormat = pkgConfig.tagFormat ?? `${pkgName}@{version}`
+    const pkgJsonPath = join(pkgConfig.path, 'package.json')
+
+    // Read version from the PACKAGE's own package.json
+    let pkgVersion: import('./core/semver.js').SemVer
+    try {
+      const content = await readFile(pkgJsonPath, 'utf-8')
+      const pkg = JSON.parse(content)
+      pkgVersion = (await import('./core/semver.js')).SemVer.parse(pkg.version ?? '0.0.0')
+    } catch {
+      pkgVersion = (await import('./core/semver.js')).SemVer.parse('0.0.0')
+    }
+
+    // Run pipeline to get bumpType and changelog
+    let ctx: PipelineContext = {
+      rawCommits: pkgCommits,
+      parsedCommits: [],
+      currentVersion: pkgVersion,
+      nextVersion: null,
+      bumpType: 'none',
+      changelogOutput: null,
+      releaseResult: null,
+      config,
+      dryRun: options.dryRun ?? false,
+      logger
+    }
+
+    const nextVersionPlugin = {
+      name: 'bumpcraft-internal-next-version',
+      stage: 'resolve' as const,
+      async execute(c: PipelineContext): Promise<PipelineContext> {
+        const effectiveBump = forceBump ?? (c.bumpType === 'none' ? undefined : c.bumpType)
+        if (!effectiveBump || effectiveBump === 'none') return c
+        let next = pkgVersion
+        if (effectiveBump === 'major') next = pkgVersion.bumpMajor()
+        else if (effectiveBump === 'minor') next = pkgVersion.bumpMinor()
+        else next = pkgVersion.bumpPatch()
+        if (options.preRelease) next = next.bumpPreRelease(options.preRelease)
+        return { ...c, bumpType: effectiveBump as BumpType, nextVersion: next }
+      }
+    }
+
+    const runner = new PipelineRunner([...plugins, nextVersionPlugin])
+    ctx = await runner.run(ctx)
+
+    if (ctx.bumpType === 'none' || !ctx.nextVersion) {
+      continue
+    }
+
+    const nextVersion = ctx.nextVersion.toString()
+
+    if (!options.dryRun) {
+      // Write version to the package's package.json
+      try {
+        const content = await readFile(pkgJsonPath, 'utf-8')
+        const pkg = JSON.parse(content)
+        pkg.version = nextVersion
+        const tmp = `${pkgJsonPath}.tmp`
+        await writeFile(tmp, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+        await rename(tmp, pkgJsonPath)
+      } catch (e) {
+        logger.warn(`Failed to update ${pkgJsonPath}: ${e}`)
+      }
+
+      // Write package-specific CHANGELOG.md
+      if (ctx.changelogOutput) {
+        const changelogPath = join(pkgConfig.path, 'CHANGELOG.md')
+        let existing = ''
+        try { existing = await readFile(changelogPath, 'utf-8') } catch { /* */ }
+        const header = '# Changelog\n\n'
+        const body = existing.startsWith('# Changelog')
+          ? existing.replace(/^# Changelog\n*/, '')
+          : existing
+        const tmp = `${changelogPath}.tmp`
+        await writeFile(tmp, `${header}${ctx.changelogOutput}\n${body}`, 'utf-8')
+        await rename(tmp, changelogPath)
+      }
+
+      // Save to history
+      const store = new HistoryStore(join('.bumpcraft', 'history.json'))
+      await store.save({
+        version: `${pkgName}@${nextVersion}`,
+        previousVersion: `${pkgName}@${pkgVersion.toString()}`,
+        date: new Date().toISOString(),
+        commits: ctx.parsedCommits,
+        changelogOutput: ctx.changelogOutput ?? ''
+      })
+
+      // Create package-specific tag
+      const tagName = tagFormat.replace('{version}', nextVersion)
+      try {
+        await git.createTag(tagName, `Release ${pkgName} ${nextVersion}`)
+      } catch { /* tag may exist */ }
+    }
+
+    logger.info(`${pkgName}: ${pkgVersion.toString()} → ${nextVersion} (${ctx.bumpType})`)
+    results.push({
+      package: pkgName,
+      bumpType: ctx.bumpType,
+      currentVersion: pkgVersion.toString(),
+      nextVersion,
+      changelogOutput: ctx.changelogOutput
+    })
+  }
+
+  return results
 }
 
 export async function currentVersion(configPath?: string) {

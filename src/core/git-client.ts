@@ -53,6 +53,15 @@ export class GitClient {
     }
   }
 
+  async getTagsMatching(pattern: string): Promise<string[]> {
+    try {
+      const tags = await this.git.tags(['--sort=-version:refname', '-l', pattern])
+      return tags.all
+    } catch {
+      return []
+    }
+  }
+
   async tagExists(tag: string): Promise<boolean> {
     try {
       await this.git.raw(['rev-parse', tag])
