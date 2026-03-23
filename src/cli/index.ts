@@ -36,14 +36,30 @@ program
   .description('Preview what a release would do (alias for release --dry-run)')
   .action(async () => {
     try {
-      const { runRelease } = await import('../index.js')
-      const result = await runRelease({ dryRun: true })
-      if (result.bumpType === 'none') {
-        console.log('No release needed.')
-        process.exit(2)
+      const { loadConfig } = await import('../core/config.js')
+      const config = await loadConfig('.bumpcraftrc.json')
+
+      if (config.monorepo) {
+        const { runMonorepoRelease } = await import('../index.js')
+        const results = await runMonorepoRelease({ dryRun: true })
+        if (!results.length) {
+          console.log('No release needed.')
+          process.exit(2)
+        }
+        for (const r of results) {
+          console.log(`${r.package}: ${r.currentVersion} → ${r.nextVersion} (${r.bumpType})`)
+          if (r.changelogOutput) console.log(r.changelogOutput)
+        }
+      } else {
+        const { runRelease } = await import('../index.js')
+        const result = await runRelease({ dryRun: true })
+        if (result.bumpType === 'none') {
+          console.log('No release needed.')
+          process.exit(2)
+        }
+        console.log(`Would release: ${result.nextVersion} (${result.bumpType})`)
+        if (result.changelogOutput) console.log(result.changelogOutput)
       }
-      console.log(`Would release: ${result.nextVersion} (${result.bumpType})`)
-      if (result.changelogOutput) console.log(result.changelogOutput)
     } catch (e) {
       console.error(`Error: ${(e as Error).message}`)
       process.exit(1)
