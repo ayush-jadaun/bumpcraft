@@ -406,7 +406,7 @@ export async function runMonorepoRelease(options: ReleaseOptions = {}): Promise<
             // Check if any dependency name matches a released package's npm name
             const releasedPkgJson = JSON.parse(await readFile(join((config.monorepo![released.package] as { path: string }).path, 'package.json'), 'utf-8'))
             const releasedNpmName = releasedPkgJson.name
-            if (deps[releasedNpmName]) {
+            if (deps[releasedNpmName] && !deps[releasedNpmName].startsWith('workspace:')) {
               deps[releasedNpmName] = `^${released.nextVersion}`
               needsBump = true
             }
