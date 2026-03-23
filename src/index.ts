@@ -9,9 +9,12 @@ import { conventionalCommitsPlugin } from './plugins/conventional-commits.js'
 import { changelogMdPlugin } from './plugins/changelog-md.js'
 import { changelogJsonPlugin } from './plugins/changelog-json.js'
 import { githubPlugin } from './plugins/github.js'
+import { gitlabPlugin } from './plugins/gitlab.js'
+import { bitbucketPlugin } from './plugins/bitbucket.js'
 import type { PipelineContext, BumpType } from './pipeline/types.js'
 import { join } from 'path'
 import { readFile, writeFile, rename } from 'fs/promises'
+import { runHook } from './core/hooks.js'
 
 export { SemVer } from './core/semver.js'
 export { BumpcraftError, ErrorCode } from './core/errors.js'
@@ -23,6 +26,8 @@ const BUILT_IN_PLUGINS = {
   'bumpcraft-plugin-changelog-md': changelogMdPlugin,
   'bumpcraft-plugin-changelog-json': changelogJsonPlugin,
   'bumpcraft-plugin-github': githubPlugin,
+  'bumpcraft-plugin-gitlab': gitlabPlugin,
+  'bumpcraft-plugin-bitbucket': bitbucketPlugin,
 } as const
 
 export interface ReleaseOptions {
@@ -144,7 +149,11 @@ export async function runRelease(options: ReleaseOptions = {}) {
   }
 
   if (!options.dryRun) {
+    const hookEnv = { BUMPCRAFT_VERSION: ctx.nextVersion.toString(), BUMPCRAFT_PREV_VERSION: currentVersion.toString(), BUMPCRAFT_BUMP_TYPE: ctx.bumpType }
+    runHook(config, 'beforeRelease', logger, hookEnv)
+    runHook(config, 'beforeBump', logger, hookEnv)
     await versionSource.write(ctx.nextVersion)
+    runHook(config, 'afterBump', logger, hookEnv)
     const store = new HistoryStore(join('.bumpcraft', 'history.json'))
     await store.save({
       version: ctx.nextVersion.toString(),
@@ -171,6 +180,7 @@ export async function runRelease(options: ReleaseOptions = {}) {
       await writeFile(tmp, `${header}${ctx.changelogOutput}\n${body}`, 'utf-8')
       await rename(tmp, changelogPath)
     }
+    runHook(config, 'afterRelease', logger, hookEnv)
   }
 
   return {
@@ -340,6 +350,72 @@ export async function runMonorepoRelease(options: ReleaseOptions = {}): Promise<
       nextVersion,
       changelogOutput: ctx.changelogOutput
     })
+  }
+
+  // Inter-package dependency bumping: if a released package is a dependency
+  // of another package, bump the dependent's version too (patch bump)
+  if (!options.dryRun && results.length > 0 && config.monorepo) {
+    const releasedNames = new Set(results.map(r => r.package))
+    for (const [depName, depConfig] of Object.entries(config.monorepo)) {
+      if (releasedNames.has(depName)) continue // already released
+      const dc = depConfig as { path: string }
+      try {
+        const content = await readFile(join(dc.path, 'package.json'), 'utf-8')
+        const pkg = JSON.parse(content)
+        let needsBump = false
+        for (const depField of ['dependencies', 'devDependencies', 'peerDependencies']) {
+          const deps = pkg[depField] as Record<string, string> | undefined
+          if (!deps) continue
+          for (const released of results) {
+            // Check if any dependency name matches a released package's npm name
+            const releasedPkgJson = JSON.parse(await readFile(join((config.monorepo![released.package] as { path: string }).path, 'package.json'), 'utf-8'))
+            const releasedNpmName = releasedPkgJson.name
+            if (deps[releasedNpmName]) {
+              deps[releasedNpmName] = `^${released.nextVersion}`
+              needsBump = true
+            }
+          }
+        }
+        if (needsBump) {
+          const tmp = `${join(dc.path, 'package.json')}.tmp`
+          await writeFile(tmp, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+          await rename(tmp, join(dc.path, 'package.json'))
+          logger.info(`${depName}: updated dependency versions`)
+        }
+      } catch { /* */ }
+    }
+  }
+
+  // Linked packages: if packages are in a linked group, they all get the highest version
+  if (!options.dryRun && results.length > 0 && config.linked?.length) {
+    for (const group of config.linked) {
+      const groupResults = results.filter(r => group.includes(r.package))
+      if (groupResults.length <= 1) continue
+
+      // Find the highest version in the group
+      const { SemVer } = await import('./core/semver.js')
+      let highest = SemVer.parse(groupResults[0].nextVersion!)
+      for (const r of groupResults.slice(1)) {
+        const v = SemVer.parse(r.nextVersion!)
+        if (v.gt(highest)) highest = v
+      }
+
+      // Set all packages in the group to the highest version
+      for (const r of groupResults) {
+        if (r.nextVersion === highest.toString()) continue
+        r.nextVersion = highest.toString()
+        const pkgPath = join((config.monorepo![r.package] as { path: string }).path, 'package.json')
+        try {
+          const content = await readFile(pkgPath, 'utf-8')
+          const pkg = JSON.parse(content)
+          pkg.version = highest.toString()
+          const tmp = `${pkgPath}.tmp`
+          await writeFile(tmp, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+          await rename(tmp, pkgPath)
+          logger.info(`${r.package}: linked to ${highest.toString()}`)
+        } catch { /* */ }
+      }
+    }
   }
 
   return results

@@ -27,6 +27,21 @@ export const changelogMdPlugin: BumpcraftPlugin = {
     // Respect a pre-authored changelog (e.g. from interactive edit mode)
     if (context.changelogOutput) return context
     const { parsedCommits, nextVersion, currentVersion } = context
+
+    // Custom template: replace {version}, {date}, {commits} placeholders
+    if (context.config.changelogTemplate) {
+      const date = new Date().toISOString().split('T')[0]
+      const version = nextVersion?.toString() ?? 'Unreleased'
+      const commitLines = parsedCommits
+        .map(c => `- ${c.scope ? `**${c.scope}:** ` : ''}${c.subject}${c.breaking ? ' BREAKING' : ''}`)
+        .join('\n')
+      const output = context.config.changelogTemplate
+        .replace(/\{version\}/g, version)
+        .replace(/\{date\}/g, date)
+        .replace(/\{commits\}/g, commitLines)
+        .replace(/\{previousVersion\}/g, currentVersion.toString())
+      return { ...context, changelogOutput: output }
+    }
     const date = new Date().toISOString().split('T')[0]
     const version = nextVersion?.toString() ?? 'Unreleased'
     const prev = currentVersion.toString()

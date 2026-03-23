@@ -211,3 +211,55 @@ bumpcraft history --from v1.0.0 --to v2.0.0
 ```
 
 See [History & Querying](history.md) for details.
+
+---
+
+### `bumpcraft status`
+
+Show pending changes and what would be released.
+
+```bash
+bumpcraft status
+```
+
+In monorepo mode, shows per-package commit counts and predicted bump types. In single-package mode, shows the overall release preview.
+
+---
+
+### `bumpcraft publish`
+
+Publish packages to npm.
+
+```bash
+bumpcraft publish [options]
+```
+
+| Flag | Description |
+|------|-------------|
+| `--package <name>` | Publish a specific monorepo package |
+| `--provenance` | Generate npm provenance attestation (CI only) |
+| `--tag <tag>` | npm dist-tag (e.g. `latest`, `next`, `beta`) |
+| `--dry-run` | Preview without publishing |
+| `--otp <code>` | One-time password for npm 2FA |
+
+Private packages (`"private": true`) are automatically skipped.
+
+See [Publishing](publishing.md) for details.
+
+---
+
+### `bumpcraft init-release`
+
+Tag the current commit as a baseline release (for adopting bumpcraft in existing projects).
+
+```bash
+bumpcraft init-release --tag-version 1.0.0 [options]
+```
+
+| Flag | Description |
+|------|-------------|
+| `--tag-version <version>` | Version to tag (required) |
+| `--message <msg>` | Tag message (default: "Initial release") |
+| `--force` | Overwrite existing tag |
+| `--allow-dirty` | Allow tagging with uncommitted changes |
+| `--push` | Push the commit and tag to remote |

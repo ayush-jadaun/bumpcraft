@@ -1,6 +1,6 @@
 # Bumpcraft
 
-Bumpcraft is a pluggable semantic versioning engine for Node.js projects. It reads Conventional Commits from git history, determines the version bump (major/minor/patch), generates a changelog, and optionally creates a GitHub release.
+Bumpcraft is a pluggable semantic versioning engine for Node.js projects. It reads Conventional Commits from git history, determines the version bump (major/minor/patch), generates a changelog, and creates releases on GitHub, GitLab, or Bitbucket. Supports monorepos with independent versioning, inter-package dependency tracking, linked packages, lifecycle hooks, npm publishing with provenance, custom changelog templates, and workspace auto-detection.
 
 ## Install
 
@@ -96,7 +96,19 @@ import { SemVer, BumpcraftError, ErrorCode } from 'bumpcraft'
     "autoRelease": ["patch", "minor"],
     "freezeAfter": "friday 17:00",
     "maxBumpPerDay": 10
-  }
+  },
+  "monorepo": {
+    "auth": { "path": "packages/auth" },
+    "api": { "path": "packages/api", "tagFormat": "@scope/api@{version}" }
+  },
+  "linked": [["auth", "api"]],
+  "hooks": {
+    "beforeRelease": "npm test",
+    "afterRelease": "echo Released $BUMPCRAFT_VERSION",
+    "beforeBump": "npm run build",
+    "afterBump": "echo Bumped to $BUMPCRAFT_VERSION"
+  },
+  "changelogTemplate": "## {version} ({date})\n\n{commits}\n"
 }
 ```
 
@@ -133,6 +145,11 @@ docs: update readme        → no bump
 | `bumpcraft plugins list` | List configured plugins |
 | `bumpcraft init` | Create config file |
 | `bumpcraft init-release --tag-version 1.0.0` | Tag current commit as baseline (for adopting bumpcraft) |
+| `bumpcraft publish` | Publish to npm (skips private packages) |
+| `bumpcraft publish --provenance` | Publish with npm provenance attestation |
+| `bumpcraft publish --package auth` | Publish a specific monorepo package |
+| `bumpcraft status` | Show pending changes per package |
+| `bumpcraft release --package auth` | Release a specific monorepo package |
 
 ## REST API (run with `npm start`)
 
@@ -154,9 +171,60 @@ Auth: Set `BUMPCRAFT_API_KEY` env var, send `X-API-Key` header.
 |----------|-------------|
 | `GITHUB_TOKEN` | GitHub PAT for creating releases |
 | `GITHUB_REPOSITORY` | `owner/repo` format |
+| `GITLAB_TOKEN` | GitLab PAT for creating releases |
+| `CI_PROJECT_ID` | GitLab project ID (auto in GitLab CI) |
+| `BITBUCKET_USER` | Bitbucket username |
+| `BITBUCKET_APP_PASSWORD` | Bitbucket app password |
+| `BITBUCKET_REPO_FULL_NAME` | `owner/repo` for Bitbucket |
 | `BUMPCRAFT_API_KEY` | API key for write endpoints |
 | `BUMPCRAFT_AUTH_ALL` | Require key for all endpoints |
 | `PORT` | API server port (default 3000) |
+
+## Built-in Plugins
+
+| Plugin | Stage | Description |
+|--------|-------|-------------|
+| `bumpcraft-plugin-conventional-commits` | parse | Parse conventional commit messages |
+| `bumpcraft-plugin-changelog-md` | changelog | Generate Markdown changelog |
+| `bumpcraft-plugin-changelog-json` | changelog | Generate JSON changelog |
+| `bumpcraft-plugin-github` | release | Create GitHub releases |
+| `bumpcraft-plugin-gitlab` | release | Create GitLab releases |
+| `bumpcraft-plugin-bitbucket` | release | Create Bitbucket tags |
+
+## Monorepo
+
+Scoped commits bump only the matching package. Unscoped commits bump all packages.
+
+```
+feat(auth): add OAuth    → bumps auth only
+fix: global fix          → bumps ALL packages
+feat(unknown): thing     → ignored (no matching package)
+```
+
+Features: independent versions per package, per-package CHANGELOG.md, per-package git tags (auth@1.2.0), inter-package dependency auto-update, linked packages (always same version), workspace auto-detection from package.json workspaces field, private package support.
+
+## Lifecycle Hooks
+
+```json
+{
+  "hooks": {
+    "beforeRelease": "npm test",
+    "afterRelease": "echo $BUMPCRAFT_VERSION",
+    "beforeBump": "npm run build",
+    "afterBump": "node scripts/notify.js"
+  }
+}
+```
+
+Env vars: BUMPCRAFT_VERSION, BUMPCRAFT_PREV_VERSION, BUMPCRAFT_BUMP_TYPE
+
+## Custom Changelog Template
+
+```json
+{ "changelogTemplate": "## {version} ({date})\n\n{commits}\n" }
+```
+
+Placeholders: {version}, {date}, {commits}, {previousVersion}
 
 ## Writing a Plugin
 
@@ -167,7 +235,6 @@ const myPlugin: BumpcraftPlugin = {
   name: 'my-plugin',
   stage: 'changelog',  // 'parse' | 'resolve' | 'changelog' | 'release' | 'notify'
   async execute(context: PipelineContext): Promise<PipelineContext> {
-    // Read from context, return modified context
     return { ...context, changelogOutput: 'custom changelog' }
   }
 }

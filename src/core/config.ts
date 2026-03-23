@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { readFile } from 'fs/promises'
+import { readFile, readdir, stat } from 'fs/promises'
+import { join, basename } from 'path'
 import { BumpcraftError, ErrorCode } from './errors.js'
 
 const PluginEntrySchema = z.union([
@@ -9,11 +10,26 @@ const PluginEntrySchema = z.union([
 
 const MonorepoPackageSchema = z.object({
   path: z.string(),
-  tagFormat: z.string().optional()
+  tagFormat: z.string().optional(),
+  private: z.boolean().optional()
 })
+
+const LinkedGroupSchema = z.array(z.string())
+
+const HooksSchema = z.object({
+  beforeRelease: z.string().optional(),
+  afterRelease: z.string().optional(),
+  beforeBump: z.string().optional(),
+  afterBump: z.string().optional(),
+  beforePublish: z.string().optional(),
+  afterPublish: z.string().optional()
+}).default({})
 
 const ConfigSchema = z.object({
   monorepo: z.record(z.string(), MonorepoPackageSchema).nullable().default(null),
+  linked: z.array(LinkedGroupSchema).default([]),
+  changelogTemplate: z.string().nullable().default(null),
+  hooks: HooksSchema,
   versionSource: z.enum(['package.json', 'git-tag']).default('package.json'),
   plugins: z.array(PluginEntrySchema).default([]),
   branches: z.object({
@@ -76,5 +92,49 @@ export async function loadConfig(configPath: string): Promise<BumpcraftConfig> {
       `Invalid config: ${result.error.message}`
     )
   }
+
+  // Auto-detect monorepo from npm/pnpm/yarn workspaces if not explicitly configured
+  if (!result.data.monorepo) {
+    try {
+      const rootPkg = JSON.parse(await readFile('package.json', 'utf-8'))
+      const workspaces: string[] | undefined = Array.isArray(rootPkg.workspaces)
+        ? rootPkg.workspaces
+        : rootPkg.workspaces?.packages
+      if (workspaces?.length) {
+        const detected: Record<string, { path: string }> = {}
+        for (const pattern of workspaces) {
+          // Support simple globs like "packages/*"
+          if (pattern.endsWith('/*')) {
+            const dir = pattern.slice(0, -2)
+            try {
+              const entries = await readdir(dir)
+              for (const entry of entries) {
+                const full = join(dir, entry)
+                try {
+                  const s = await stat(full)
+                  if (s.isDirectory()) {
+                    try {
+                      await readFile(join(full, 'package.json'), 'utf-8')
+                      detected[entry] = { path: full }
+                    } catch { /* no package.json */ }
+                  }
+                } catch { /* */ }
+              }
+            } catch { /* dir doesn't exist */ }
+          } else if (!pattern.includes('*')) {
+            // Direct path like "packages/auth"
+            try {
+              await readFile(join(pattern, 'package.json'), 'utf-8')
+              detected[basename(pattern)] = { path: pattern }
+            } catch { /* */ }
+          }
+        }
+        if (Object.keys(detected).length > 0) {
+          result.data.monorepo = detected
+        }
+      }
+    } catch { /* no root package.json or not valid */ }
+  }
+
   return result.data
 }
