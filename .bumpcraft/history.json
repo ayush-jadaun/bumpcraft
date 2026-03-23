@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.5.6",
+    "previousVersion": "1.5.5",
+    "date": "2026-03-23T21:07:27.365Z",
+    "commits": [
+      {
+        "hash": "60fbecc07a55ff022d7f70524d0cf2ac96b49493",
+        "type": "fix",
+        "scope": null,
+        "subject": "comprehensive edge case fixes + 26 new tests (250 total)",
+        "body": "Bugs fixed:\n- Default plugins now include conventional-commits + changelog-md\n  (empty plugins array = silent failure was the root cause of\n  monorepo release not detecting commits)\n- Empty commit subjects (feat:   ) rejected by parser\n- workspace:* refs preserved in inter-package dep updater\n- Name collision in workspace auto-detect: packages/cache/memory\n  and packages/db/memory no longer overwrite each other\n- pnpm-workspace.yaml with comments and unquoted globs parsed correctly\n- package.json workspaces takes precedence over pnpm-workspace.yaml\n\n26 new tests covering:\n- Commit parser: no colon, empty scope, nested parens, feat!:,\n  feat(scope)!:, BREAKING CHANGE footer, hyphenated scope, slashed\n  scope, emoji, empty message, whitespace-only subject, merge commits,\n  revert commits, multi-line, 500-char subject, markdown special chars,\n  custom commitTypes, feat disabled via commitTypes\n- Workspace detection: name collisions, comments in yaml, unquoted\n  globs, package.json vs pnpm-workspace.yaml precedence, zero matches,\n  missing package.json in dir, explicit config override, empty config\n\nDocs updated: monorepo.md (pnpm support, workspace:* note, collisions),\nllms.txt (default plugins, pnpm-workspace.yaml, workspace:* skip)",
+        "breaking": false,
+        "raw": "60fbecc07a55ff022d7f70524d0cf2ac96b49493 fix: comprehensive edge case fixes + 26 new tests (250 total)\nBugs fixed:\n- Default plugins now include conventional-commits + changelog-md\n  (empty plugins array = silent failure was the root cause of\n  monorepo release not detecting commits)\n- Empty commit subjects (feat:   ) rejected by parser\n- workspace:* refs preserved in inter-package dep updater\n- Name collision in workspace auto-detect: packages/cache/memory\n  and packages/db/memory no longer overwrite each other\n- pnpm-workspace.yaml with comments and unquoted globs parsed correctly\n- package.json workspaces takes precedence over pnpm-workspace.yaml\n\n26 new tests covering:\n- Commit parser: no colon, empty scope, nested parens, feat!:,\n  feat(scope)!:, BREAKING CHANGE footer, hyphenated scope, slashed\n  scope, emoji, empty message, whitespace-only subject, merge commits,\n  revert commits, multi-line, 500-char subject, markdown special chars,\n  custom commitTypes, feat disabled via commitTypes\n- Workspace detection: name collisions, comments in yaml, unquoted\n  globs, package.json vs pnpm-workspace.yaml precedence, zero matches,\n  missing package.json in dir, explicit config override, empty config\n\nDocs updated: monorepo.md (pnpm support, workspace:* note, collisions),\nllms.txt (default plugins, pnpm-workspace.yaml, workspace:* skip)"
+      },
+      {
+        "hash": "f1a6af1d30995a24e4afe604c6d3cf8b75f167f3",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.5.5 [skip ci]",
+        "body": null,
+        "breaking": false,
+        "raw": "f1a6af1d30995a24e4afe604c6d3cf8b75f167f3 chore(release): 1.5.5 [skip ci]"
+      }
+    ],
+    "changelogOutput": "## [1.5.6](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.6) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.5...v1.5.6))\n\n### 🐛 Bug Fixes\n\n- comprehensive edge case fixes + 26 new tests (250 total) ([60fbecc](https://github.com/ayush-jadaun/bumpcraft/commit/60fbecc07a55ff022d7f70524d0cf2ac96b49493))\n"
+  },
+  {
     "version": "1.5.5",
     "previousVersion": "1.5.4",
     "date": "2026-03-23T21:04:36.983Z",

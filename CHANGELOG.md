@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.6](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.6) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.5...v1.5.6))
+
+### 🐛 Bug Fixes
+
+- comprehensive edge case fixes + 26 new tests (250 total) ([60fbecc](https://github.com/ayush-jadaun/bumpcraft/commit/60fbecc07a55ff022d7f70524d0cf2ac96b49493))
+
 ## [1.5.5](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.5) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.4...v1.5.5))
 
 ### 🐛 Bug Fixes
