@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.0) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.4.1...v1.5.0))
+
+### 🚀 Features
+
+- changeset files and version PR mode (224 tests) ([1f850ed](https://github.com/ayush-jadaun/bumpcraft/commit/1f850eded3df0aca24bbb2c68f76729e810c4475))
+- publish, hooks, workspace detect, linked packages, GitLab/Bitbucket plugins, custom templates, status command (205 tests) ([a4ca293](https://github.com/ayush-jadaun/bumpcraft/commit/a4ca293b5032b359db12bc2a98ba87636b5c5b08))
+- monorepo support with 29 comprehensive tests (163 total) ([82b28c7](https://github.com/ayush-jadaun/bumpcraft/commit/82b28c7807cd2e06e6884b2242a5cb97c2a35cd0))
+- --push adds [skip ci] to release commits ([6f1da26](https://github.com/ayush-jadaun/bumpcraft/commit/6f1da26856ff9704fa3e436c27d4532754772a06))
+
+### 🐛 Bug Fixes
+
+- resolve TS2451 duplicate config declaration in release.ts ([1fa651c](https://github.com/ayush-jadaun/bumpcraft/commit/1fa651ca25fe7e55eb3cf99b8bd9aa49530759c1))
+
+### 📚 Documentation
+
+- update all docs for [skip ci] in --push release commits ([6c3642a](https://github.com/ayush-jadaun/bumpcraft/commit/6c3642af4818df3a78e13ba7becbb49273c89aa4))
+
 ## [1.4.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.4.1) (2026-03-22) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.4.0...v1.4.1))
 
 ### 🐛 Bug Fixes

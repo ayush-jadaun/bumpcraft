@@ -1,5 +1,76 @@
 [
   {
+    "version": "1.5.0",
+    "previousVersion": "1.4.1",
+    "date": "2026-03-23T15:44:16.201Z",
+    "commits": [
+      {
+        "hash": "1f850eded3df0aca24bbb2c68f76729e810c4475",
+        "type": "feat",
+        "scope": null,
+        "subject": "changeset files and version PR mode (224 tests)",
+        "body": "Changeset files (.changeset/*.md):\n- bumpcraft changeset create: interactive or --package/--bump/--message\n- bumpcraft changeset list: show pending changesets\n- Changeset bumps merge with commit-based detection (highest wins)\n- Changeset summaries appear in changelog under Changesets section\n- Files are consumed (deleted) after successful non-dry-run release\n- Supports multiple packages per changeset file\n\nVersion PR mode (--create-pr):\n- Creates a bumpcraft/release-v{version} branch\n- Commits release artifacts (package.json, CHANGELOG.md, .bumpcraft/)\n- Opens a GitHub PR with changelog as the body\n- Switches back to original branch after PR creation\n- Alternative to --push for teams that want review before releasing\n\n19 new tests:\n- Changeset unit tests (10): create, read, parse, consume, edge cases\n- Changeset integration tests (9): override/merge with commits,\n  dry-run preservation, multiple files merge, no-downgrade,\n  trigger release from chore-only commits\n\nDocs added: changesets.md, version-pr.md\nDocs updated: README.md, llms.txt, cli-reference.md",
+        "breaking": false,
+        "raw": "1f850eded3df0aca24bbb2c68f76729e810c4475 feat: changeset files and version PR mode (224 tests)\nChangeset files (.changeset/*.md):\n- bumpcraft changeset create: interactive or --package/--bump/--message\n- bumpcraft changeset list: show pending changesets\n- Changeset bumps merge with commit-based detection (highest wins)\n- Changeset summaries appear in changelog under Changesets section\n- Files are consumed (deleted) after successful non-dry-run release\n- Supports multiple packages per changeset file\n\nVersion PR mode (--create-pr):\n- Creates a bumpcraft/release-v{version} branch\n- Commits release artifacts (package.json, CHANGELOG.md, .bumpcraft/)\n- Opens a GitHub PR with changelog as the body\n- Switches back to original branch after PR creation\n- Alternative to --push for teams that want review before releasing\n\n19 new tests:\n- Changeset unit tests (10): create, read, parse, consume, edge cases\n- Changeset integration tests (9): override/merge with commits,\n  dry-run preservation, multiple files merge, no-downgrade,\n  trigger release from chore-only commits\n\nDocs added: changesets.md, version-pr.md\nDocs updated: README.md, llms.txt, cli-reference.md"
+      },
+      {
+        "hash": "1fa651ca25fe7e55eb3cf99b8bd9aa49530759c1",
+        "type": "fix",
+        "scope": null,
+        "subject": "resolve TS2451 duplicate config declaration in release.ts",
+        "body": null,
+        "breaking": false,
+        "raw": "1fa651ca25fe7e55eb3cf99b8bd9aa49530759c1 fix: resolve TS2451 duplicate config declaration in release.ts"
+      },
+      {
+        "hash": "a4ca293b5032b359db12bc2a98ba87636b5c5b08",
+        "type": "feat",
+        "scope": null,
+        "subject": "publish, hooks, workspace detect, linked packages, GitLab/Bitbucket plugins, custom templates, status command (205 tests)",
+        "body": "New features:\n- bumpcraft publish: npm publish with --provenance, --package, --tag, --otp, skips private\n- bumpcraft status: show pending changes per package with predicted bump types\n- Workspace auto-detect from npm/pnpm/yarn workspaces field (zero config monorepo)\n- Lifecycle hooks: beforeRelease, afterRelease, beforeBump, afterBump with env vars\n- Inter-package dependency tracking: auto-updates dep versions in dependent packages\n- Linked packages: packages in a group always release at the same (highest) version\n- GitLab release plugin (bumpcraft-plugin-gitlab)\n- Bitbucket release plugin (bumpcraft-plugin-bitbucket)\n- Custom changelog templates with {version}, {date}, {commits}, {previousVersion}\n- Private package support: versioned but skipped by publish\n\nDocs added: monorepo.md, hooks.md, publishing.md\nDocs updated: cli-reference.md (status, publish, init-release), README.md, llms.txt\n\n42 new tests covering:\n- Hooks: unit (5) + integration (2) — runs, env vars, skips dry-run, abort on failure\n- Plugins: GitLab (3) + Bitbucket (4) — skip conditions for missing creds/config\n- Changelog template: custom placeholders, breaking flag, default fallback (3)\n- Workspace auto-detect: npm array, yarn object, direct paths, empty, nonexistent (5)\n- Inter-package deps: transitive chains, multiple dependents, devDeps+peerDeps (3)\n- Linked packages: highest version wins, major+minor sync, independent unlinked (3)\n- Private packages: still versioned during release (1)\n- Monorepo edge cases: substring scope collision, nested scope, 30 commits to one pkg,\n  interleaved commits, missing package.json, no version field, changelog isolation,\n  commit to unknown scope, version divergence (13)",
+        "breaking": false,
+        "raw": "a4ca293b5032b359db12bc2a98ba87636b5c5b08 feat: publish, hooks, workspace detect, linked packages, GitLab/Bitbucket plugins, custom templates, status command (205 tests)\nNew features:\n- bumpcraft publish: npm publish with --provenance, --package, --tag, --otp, skips private\n- bumpcraft status: show pending changes per package with predicted bump types\n- Workspace auto-detect from npm/pnpm/yarn workspaces field (zero config monorepo)\n- Lifecycle hooks: beforeRelease, afterRelease, beforeBump, afterBump with env vars\n- Inter-package dependency tracking: auto-updates dep versions in dependent packages\n- Linked packages: packages in a group always release at the same (highest) version\n- GitLab release plugin (bumpcraft-plugin-gitlab)\n- Bitbucket release plugin (bumpcraft-plugin-bitbucket)\n- Custom changelog templates with {version}, {date}, {commits}, {previousVersion}\n- Private package support: versioned but skipped by publish\n\nDocs added: monorepo.md, hooks.md, publishing.md\nDocs updated: cli-reference.md (status, publish, init-release), README.md, llms.txt\n\n42 new tests covering:\n- Hooks: unit (5) + integration (2) — runs, env vars, skips dry-run, abort on failure\n- Plugins: GitLab (3) + Bitbucket (4) — skip conditions for missing creds/config\n- Changelog template: custom placeholders, breaking flag, default fallback (3)\n- Workspace auto-detect: npm array, yarn object, direct paths, empty, nonexistent (5)\n- Inter-package deps: transitive chains, multiple dependents, devDeps+peerDeps (3)\n- Linked packages: highest version wins, major+minor sync, independent unlinked (3)\n- Private packages: still versioned during release (1)\n- Monorepo edge cases: substring scope collision, nested scope, 30 commits to one pkg,\n  interleaved commits, missing package.json, no version field, changelog isolation,\n  commit to unknown scope, version divergence (13)"
+      },
+      {
+        "hash": "82b28c7807cd2e06e6884b2242a5cb97c2a35cd0",
+        "type": "feat",
+        "scope": null,
+        "subject": "monorepo support with 29 comprehensive tests (163 total)",
+        "body": "Monorepo release support:\n- Config: monorepo.{name}.path + optional tagFormat\n- Scoped commits only bump that package, unscoped apply to all\n- Each package reads its own package.json version independently\n- Per-package CHANGELOG.md, git tags, and history entries\n- --package flag, --force-bump, --pre-release per-package\n- CLI auto-detects monorepo from config\n- Custom tag formats (auth@1.2.0 or @mono/auth@1.2.0)\n- Breaking changes: scoped=one package, unscoped=all packages",
+        "breaking": false,
+        "raw": "82b28c7807cd2e06e6884b2242a5cb97c2a35cd0 feat: monorepo support with 29 comprehensive tests (163 total)\nMonorepo release support:\n- Config: monorepo.{name}.path + optional tagFormat\n- Scoped commits only bump that package, unscoped apply to all\n- Each package reads its own package.json version independently\n- Per-package CHANGELOG.md, git tags, and history entries\n- --package flag, --force-bump, --pre-release per-package\n- CLI auto-detects monorepo from config\n- Custom tag formats (auth@1.2.0 or @mono/auth@1.2.0)\n- Breaking changes: scoped=one package, unscoped=all packages"
+      },
+      {
+        "hash": "6c3642af4818df3a78e13ba7becbb49273c89aa4",
+        "type": "docs",
+        "scope": null,
+        "subject": "update all docs for [skip ci] in --push release commits",
+        "body": null,
+        "breaking": false,
+        "raw": "6c3642af4818df3a78e13ba7becbb49273c89aa4 docs: update all docs for [skip ci] in --push release commits"
+      },
+      {
+        "hash": "6f1da26856ff9704fa3e436c27d4532754772a06",
+        "type": "feat",
+        "scope": null,
+        "subject": "--push adds [skip ci] to release commits",
+        "body": "Release commits (chore(release): x.x.x [skip ci]) now skip all CI\nworkflows entirely. No more wasted test/lint/build runs on bot commits.\n\nRemoved the !contains('chore(release)') guard from CI since [skip ci]\nhandles it at the GitHub level — zero workflows triggered.",
+        "breaking": false,
+        "raw": "6f1da26856ff9704fa3e436c27d4532754772a06 feat: --push adds [skip ci] to release commits\nRelease commits (chore(release): x.x.x [skip ci]) now skip all CI\nworkflows entirely. No more wasted test/lint/build runs on bot commits.\n\nRemoved the !contains('chore(release)') guard from CI since [skip ci]\nhandles it at the GitHub level — zero workflows triggered."
+      },
+      {
+        "hash": "51dfc5bacd0d9f98246bcc40dca6eb0b2d205e4c",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.4.1",
+        "body": null,
+        "breaking": false,
+        "raw": "51dfc5bacd0d9f98246bcc40dca6eb0b2d205e4c chore(release): 1.4.1"
+      }
+    ],
+    "changelogOutput": "## [1.5.0](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.0) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.4.1...v1.5.0))\n\n### 🚀 Features\n\n- changeset files and version PR mode (224 tests) ([1f850ed](https://github.com/ayush-jadaun/bumpcraft/commit/1f850eded3df0aca24bbb2c68f76729e810c4475))\n- publish, hooks, workspace detect, linked packages, GitLab/Bitbucket plugins, custom templates, status command (205 tests) ([a4ca293](https://github.com/ayush-jadaun/bumpcraft/commit/a4ca293b5032b359db12bc2a98ba87636b5c5b08))\n- monorepo support with 29 comprehensive tests (163 total) ([82b28c7](https://github.com/ayush-jadaun/bumpcraft/commit/82b28c7807cd2e06e6884b2242a5cb97c2a35cd0))\n- --push adds [skip ci] to release commits ([6f1da26](https://github.com/ayush-jadaun/bumpcraft/commit/6f1da26856ff9704fa3e436c27d4532754772a06))\n\n### 🐛 Bug Fixes\n\n- resolve TS2451 duplicate config declaration in release.ts ([1fa651c](https://github.com/ayush-jadaun/bumpcraft/commit/1fa651ca25fe7e55eb3cf99b8bd9aa49530759c1))\n\n### 📚 Documentation\n\n- update all docs for [skip ci] in --push release commits ([6c3642a](https://github.com/ayush-jadaun/bumpcraft/commit/6c3642af4818df3a78e13ba7becbb49273c89aa4))\n"
+  },
+  {
     "version": "1.4.1",
     "previousVersion": "1.4.0",
     "date": "2026-03-22T16:49:43.332Z",
