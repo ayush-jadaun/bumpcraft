@@ -124,9 +124,9 @@ describe('Edge Cases', () => {
       rmSync(join(dir, '.bumpcraftrc.json'))
       execSync('git commit --allow-empty -m "feat: something"', { cwd: dir })
       const { runRelease } = await import('../../src/index.js')
-      // Should still work with defaults (no plugins = no parse = bumpType none)
+      // Default plugins (conventional-commits + changelog-md) should still parse commits
       const result = await runRelease({ dryRun: true })
-      expect(result.bumpType).toBe('none') // no plugins configured
+      expect(result.bumpType).toBe('minor') // default plugins detect feat: as minor
     })
   })
 

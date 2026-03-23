@@ -8,7 +8,7 @@ describe('loadConfig', () => {
   it('returns defaults when no config file exists', async () => {
     const config = await loadConfig('/nonexistent/path/.bumpcraftrc.json')
     expect(config.versionSource).toBe('package.json')
-    expect(config.plugins).toEqual([])
+    expect(config.plugins).toEqual(['bumpcraft-plugin-conventional-commits', 'bumpcraft-plugin-changelog-md'])
   })
 
   it('merges file config over defaults', async () => {

@@ -31,7 +31,10 @@ const ConfigSchema = z.object({
   changelogTemplate: z.string().nullable().default(null),
   hooks: HooksSchema,
   versionSource: z.enum(['package.json', 'git-tag']).default('package.json'),
-  plugins: z.array(PluginEntrySchema).default([]),
+  plugins: z.array(PluginEntrySchema).default([
+    'bumpcraft-plugin-conventional-commits',
+    'bumpcraft-plugin-changelog-md'
+  ]),
   branches: z.object({
     release: z.array(z.string()).default(['main', 'master']),
     preRelease: z.record(z.string(), z.string()).default({})
