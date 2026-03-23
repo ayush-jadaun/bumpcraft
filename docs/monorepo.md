@@ -16,7 +16,11 @@ If your root `package.json` has a `workspaces` field, bumpcraft auto-detects pac
 }
 ```
 
-Bumpcraft reads the workspace glob, finds all directories with a `package.json`, and registers them as monorepo packages. Supports npm, pnpm, and yarn workspace formats.
+Bumpcraft reads the workspace glob, finds all directories with a `package.json`, and registers them as monorepo packages. Supports npm, pnpm (`pnpm-workspace.yaml`), and yarn workspace formats.
+
+If both `pnpm-workspace.yaml` and `package.json` workspaces exist, `package.json` takes precedence.
+
+Name collisions (e.g. `packages/cache-adapters/memory` and `packages/db-adapters/memory`) are resolved by prefixing with the parent directory name.
 
 ### Option 2: Explicit config
 
@@ -106,6 +110,8 @@ When a package is released, bumpcraft automatically updates the dependency versi
 ```
 
 This works for `dependencies`, `devDependencies`, and `peerDependencies`.
+
+**Note:** `workspace:*`, `workspace:^`, and `workspace:~` references are never modified — pnpm handles the replacement at publish time.
 
 ## Linked Packages
 

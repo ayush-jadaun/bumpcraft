@@ -151,7 +151,14 @@ export async function loadConfig(configPath: string): Promise<BumpcraftConfig> {
                 if (s.isDirectory()) {
                   try {
                     await readFile(join(full, 'package.json'), 'utf-8')
-                    detected[entry] = { path: full }
+                    // Use directory name as key, but prefix with parent to avoid collisions
+                    // e.g. packages/db-adapters/memory → "memory", but if "memory" already
+                    // exists from another glob, use "db-adapters/memory" instead
+                    let key = entry
+                    if (detected[key]) {
+                      key = `${basename(dir)}/${entry}`
+                    }
+                    detected[key] = { path: full }
                   } catch { /* no package.json */ }
                 }
               } catch { /* */ }

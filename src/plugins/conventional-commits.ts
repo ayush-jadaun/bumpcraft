@@ -11,13 +11,16 @@ function parseCommit(raw: string): ParsedCommit | null {
   const match = COMMIT_REGEX.exec(header)
   if (!match) return null
 
+  const subject = match[5].trim()
+  if (!subject) return null // empty subject after colon
+
   const breaking = match[4] === '!' || (body?.includes('BREAKING CHANGE:') ?? false)
 
   return {
     hash: match[1],
     type: match[2],
     scope: match[3]?.replace(/[()]/g, '') ?? null,
-    subject: match[5].trim(),
+    subject,
     body,
     breaking,
     raw

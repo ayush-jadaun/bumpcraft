@@ -204,7 +204,7 @@ fix: global fix          → bumps ALL packages
 feat(unknown): thing     → ignored (no matching package)
 ```
 
-Features: independent versions per package, per-package CHANGELOG.md, per-package git tags (auth@1.2.0), inter-package dependency auto-update, linked packages (always same version), workspace auto-detection from package.json workspaces field, private package support.
+Features: independent versions per package, per-package CHANGELOG.md, per-package git tags (auth@1.2.0), inter-package dependency auto-update (skips workspace:* refs), linked packages (always same version), workspace auto-detection from package.json workspaces AND pnpm-workspace.yaml, private package support, name collision handling for nested workspaces. Default plugins (conventional-commits + changelog-md) are included automatically — no need to list them in config.
 
 ## Lifecycle Hooks
 
