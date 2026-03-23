@@ -246,6 +246,8 @@ export async function runMonorepoRelease(options: ReleaseOptions = {}): Promise<
   const ref = options.from ?? latestTag
   const allCommits = options._rawCommitsOverride ?? await git.getCommitsSince(ref)
 
+  logger.info(`${allCommits.length} commits since ${ref ?? 'beginning'}`)
+
   // Parse all commits to extract scopes
   const parsedAll = allCommits.map(raw => {
     const match = /^[a-fA-F0-9]+\s+\w+\(([^)]+)\)/.exec(raw.split('\n')[0])
@@ -280,8 +282,10 @@ export async function runMonorepoRelease(options: ReleaseOptions = {}): Promise<
       .map(c => c.raw)
 
     if (!pkgCommits.length && !forceBump) {
+      logger.info(`${pkgName}: 0 matching commits — skipping`)
       continue
     }
+    logger.info(`${pkgName}: ${pkgCommits.length} matching commits`)
 
     const tagFormat = pkgConfig.tagFormat ?? `${pkgName}@{version}`
     const pkgJsonPath = join(pkgConfig.path, 'package.json')
@@ -329,6 +333,7 @@ export async function runMonorepoRelease(options: ReleaseOptions = {}): Promise<
     ctx = await runner.run(ctx)
 
     if (ctx.bumpType === 'none' || !ctx.nextVersion) {
+      logger.info(`${pkgName}: pipeline returned bumpType=${ctx.bumpType}, nextVersion=${ctx.nextVersion} — skipping`)
       continue
     }
 
