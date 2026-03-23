@@ -95,45 +95,76 @@ export async function loadConfig(configPath: string): Promise<BumpcraftConfig> {
 
   // Auto-detect monorepo from npm/pnpm/yarn workspaces if not explicitly configured
   if (!result.data.monorepo) {
+    let workspaces: string[] | undefined
+
+    // 1. Try package.json workspaces (npm/yarn)
     try {
       const rootPkg = JSON.parse(await readFile('package.json', 'utf-8'))
-      const workspaces: string[] | undefined = Array.isArray(rootPkg.workspaces)
+      workspaces = Array.isArray(rootPkg.workspaces)
         ? rootPkg.workspaces
         : rootPkg.workspaces?.packages
-      if (workspaces?.length) {
-        const detected: Record<string, { path: string }> = {}
-        for (const pattern of workspaces) {
-          // Support simple globs like "packages/*"
-          if (pattern.endsWith('/*')) {
-            const dir = pattern.slice(0, -2)
-            try {
-              const entries = await readdir(dir)
-              for (const entry of entries) {
-                const full = join(dir, entry)
-                try {
-                  const s = await stat(full)
-                  if (s.isDirectory()) {
-                    try {
-                      await readFile(join(full, 'package.json'), 'utf-8')
-                      detected[entry] = { path: full }
-                    } catch { /* no package.json */ }
-                  }
-                } catch { /* */ }
-              }
-            } catch { /* dir doesn't exist */ }
-          } else if (!pattern.includes('*')) {
-            // Direct path like "packages/auth"
-            try {
-              await readFile(join(pattern, 'package.json'), 'utf-8')
-              detected[basename(pattern)] = { path: pattern }
-            } catch { /* */ }
+    } catch { /* */ }
+
+    // 2. Try pnpm-workspace.yaml
+    if (!workspaces?.length) {
+      try {
+        const yamlContent = await readFile('pnpm-workspace.yaml', 'utf-8')
+        // Simple YAML parser for the packages field — handles:
+        //   packages:
+        //     - 'packages/*'
+        //     - 'apps/*'
+        const lines = yamlContent.split('\n')
+        let inPackages = false
+        const parsed: string[] = []
+        for (const line of lines) {
+          if (/^packages\s*:/.test(line)) {
+            inPackages = true
+            continue
+          }
+          if (inPackages) {
+            const m = line.match(/^\s+-\s+['"]?([^'"]+)['"]?\s*$/)
+            if (m) {
+              parsed.push(m[1].trim())
+            } else if (/^\S/.test(line)) {
+              break // next top-level key
+            }
           }
         }
-        if (Object.keys(detected).length > 0) {
-          result.data.monorepo = detected
+        if (parsed.length > 0) workspaces = parsed
+      } catch { /* no pnpm-workspace.yaml */ }
+    }
+
+    if (workspaces?.length) {
+      const detected: Record<string, { path: string }> = {}
+      for (const pattern of workspaces) {
+        if (pattern.endsWith('/*')) {
+          const dir = pattern.slice(0, -2)
+          try {
+            const entries = await readdir(dir)
+            for (const entry of entries) {
+              const full = join(dir, entry)
+              try {
+                const s = await stat(full)
+                if (s.isDirectory()) {
+                  try {
+                    await readFile(join(full, 'package.json'), 'utf-8')
+                    detected[entry] = { path: full }
+                  } catch { /* no package.json */ }
+                }
+              } catch { /* */ }
+            }
+          } catch { /* dir doesn't exist */ }
+        } else if (!pattern.includes('*')) {
+          try {
+            await readFile(join(pattern, 'package.json'), 'utf-8')
+            detected[basename(pattern)] = { path: pattern }
+          } catch { /* */ }
         }
       }
-    } catch { /* no root package.json or not valid */ }
+      if (Object.keys(detected).length > 0) {
+        result.data.monorepo = detected
+      }
+    }
   }
 
   return result.data
