@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.5.2",
+    "previousVersion": "1.5.1",
+    "date": "2026-03-23T20:24:54.970Z",
+    "commits": [
+      {
+        "hash": "195f2da5477b7f6a47014065a3ea62cfca29e703",
+        "type": "fix",
+        "scope": null,
+        "subject": "auto-detect monorepo from pnpm-workspace.yaml",
+        "body": "Previously only read workspaces from package.json (npm/yarn).\nNow also parses pnpm-workspace.yaml packages field.\nHandles both quoted and unquoted glob patterns.",
+        "breaking": false,
+        "raw": "195f2da5477b7f6a47014065a3ea62cfca29e703 fix: auto-detect monorepo from pnpm-workspace.yaml\nPreviously only read workspaces from package.json (npm/yarn).\nNow also parses pnpm-workspace.yaml packages field.\nHandles both quoted and unquoted glob patterns."
+      },
+      {
+        "hash": "503a8f7c08b3783f65d8f0e4fe0cc175c104a5bc",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.5.1 [skip ci]",
+        "body": null,
+        "breaking": false,
+        "raw": "503a8f7c08b3783f65d8f0e4fe0cc175c104a5bc chore(release): 1.5.1 [skip ci]"
+      }
+    ],
+    "changelogOutput": "## [1.5.2](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.2) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.1...v1.5.2))\n\n### 🐛 Bug Fixes\n\n- auto-detect monorepo from pnpm-workspace.yaml ([195f2da](https://github.com/ayush-jadaun/bumpcraft/commit/195f2da5477b7f6a47014065a3ea62cfca29e703))\n"
+  },
+  {
     "version": "1.5.1",
     "previousVersion": "1.5.0",
     "date": "2026-03-23T20:04:46.812Z",

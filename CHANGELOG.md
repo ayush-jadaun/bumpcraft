@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.2](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.2) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.1...v1.5.2))
+
+### 🐛 Bug Fixes
+
+- auto-detect monorepo from pnpm-workspace.yaml ([195f2da](https://github.com/ayush-jadaun/bumpcraft/commit/195f2da5477b7f6a47014065a3ea62cfca29e703))
+
 ## [1.5.1](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.1) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.0...v1.5.1))
 
 ### 🐛 Bug Fixes
