@@ -1,6 +1,7 @@
 # Bumpcraft
 
 [![npm version](https://img.shields.io/npm/v/bumpcraft.svg)](https://www.npmjs.com/package/bumpcraft)
+[![npm downloads](https://img.shields.io/npm/dt/bumpcraft.svg)](https://www.npmjs.com/package/bumpcraft)
 [![license](https://img.shields.io/npm/l/bumpcraft.svg)](https://github.com/ayush-jadaun/bumpcraft/blob/main/LICENSE)
 
 Pluggable semantic versioning and changelog automation engine. Automates version bumping, changelog generation, and release management through a pipeline architecture with swappable plugins.
