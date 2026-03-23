@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.5.4",
+    "previousVersion": "1.5.3",
+    "date": "2026-03-23T20:54:52.986Z",
+    "commits": [
+      {
+        "hash": "e86984585b38347d8fd3588e58c120115887ad43",
+        "type": "fix",
+        "scope": null,
+        "subject": "default plugins to conventional-commits + changelog-md when not specified",
+        "body": "Bug: when .bumpcraftrc.json omitted the plugins field, it defaulted\nto an empty array. No plugins = no commit parser = parsedCommits\nstays empty = bumpType always 'none'. Users who only configured\ncommitTypes/policies without listing plugins got silent failures.\n\nFix: plugins default to ['bumpcraft-plugin-conventional-commits',\n'bumpcraft-plugin-changelog-md'] — the two essential plugins that\nmake bumpcraft work out of the box.\n\nAlso removed debug logging from monorepo release.",
+        "breaking": false,
+        "raw": "e86984585b38347d8fd3588e58c120115887ad43 fix: default plugins to conventional-commits + changelog-md when not specified\nBug: when .bumpcraftrc.json omitted the plugins field, it defaulted\nto an empty array. No plugins = no commit parser = parsedCommits\nstays empty = bumpType always 'none'. Users who only configured\ncommitTypes/policies without listing plugins got silent failures.\n\nFix: plugins default to ['bumpcraft-plugin-conventional-commits',\n'bumpcraft-plugin-changelog-md'] — the two essential plugins that\nmake bumpcraft work out of the box.\n\nAlso removed debug logging from monorepo release."
+      },
+      {
+        "hash": "4d2ecc65f4c27238097a48eb1fbdeb885988ce6d",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.5.3 [skip ci]",
+        "body": null,
+        "breaking": false,
+        "raw": "4d2ecc65f4c27238097a48eb1fbdeb885988ce6d chore(release): 1.5.3 [skip ci]"
+      }
+    ],
+    "changelogOutput": "## [1.5.4](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.4) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.3...v1.5.4))\n\n### 🐛 Bug Fixes\n\n- default plugins to conventional-commits + changelog-md when not specified ([e869845](https://github.com/ayush-jadaun/bumpcraft/commit/e86984585b38347d8fd3588e58c120115887ad43))\n"
+  },
+  {
     "version": "1.5.3",
     "previousVersion": "1.5.2",
     "date": "2026-03-23T20:46:50.778Z",

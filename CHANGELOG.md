@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.4](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.4) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.3...v1.5.4))
+
+### 🐛 Bug Fixes
+
+- default plugins to conventional-commits + changelog-md when not specified ([e869845](https://github.com/ayush-jadaun/bumpcraft/commit/e86984585b38347d8fd3588e58c120115887ad43))
+
 ## [1.5.3](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.3) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.2...v1.5.3))
 
 ### 🐛 Bug Fixes
