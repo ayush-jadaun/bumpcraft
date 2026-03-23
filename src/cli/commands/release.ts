@@ -30,8 +30,8 @@ export function registerRelease(program: Command) {
         }
 
         // Monorepo mode
-        const config = await loadConfig('.bumpcraftrc.json')
-        if (config.monorepo) {
+        const monoConfig = await loadConfig('.bumpcraftrc.json')
+        if (monoConfig.monorepo) {
           const { runMonorepoRelease } = await import('../../index.js')
           const results = await runMonorepoRelease({
             dryRun: opts.dryRun,
