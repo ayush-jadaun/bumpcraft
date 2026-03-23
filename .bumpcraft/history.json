@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.5.5",
+    "previousVersion": "1.5.4",
+    "date": "2026-03-23T21:04:36.983Z",
+    "commits": [
+      {
+        "hash": "452fad9ac4e96e1f16183b4ec2d31bcef1c4a83f",
+        "type": "fix",
+        "scope": null,
+        "subject": "skip workspace:* deps in inter-package dependency updater",
+        "body": "pnpm workspace protocol specifiers (workspace:*, workspace:^, etc.)\nshould never be modified in the repo — pnpm handles the replacement\nat publish time.",
+        "breaking": false,
+        "raw": "452fad9ac4e96e1f16183b4ec2d31bcef1c4a83f fix: skip workspace:* deps in inter-package dependency updater\npnpm workspace protocol specifiers (workspace:*, workspace:^, etc.)\nshould never be modified in the repo — pnpm handles the replacement\nat publish time."
+      },
+      {
+        "hash": "b745f0ba507466f7a698d6434e21061191d55819",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.5.4 [skip ci]",
+        "body": null,
+        "breaking": false,
+        "raw": "b745f0ba507466f7a698d6434e21061191d55819 chore(release): 1.5.4 [skip ci]"
+      }
+    ],
+    "changelogOutput": "## [1.5.5](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.5) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.4...v1.5.5))\n\n### 🐛 Bug Fixes\n\n- skip workspace:* deps in inter-package dependency updater ([452fad9](https://github.com/ayush-jadaun/bumpcraft/commit/452fad9ac4e96e1f16183b4ec2d31bcef1c4a83f))\n"
+  },
+  {
     "version": "1.5.4",
     "previousVersion": "1.5.3",
     "date": "2026-03-23T20:54:52.986Z",

@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.5](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.5) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.4...v1.5.5))
+
+### 🐛 Bug Fixes
+
+- skip workspace:* deps in inter-package dependency updater ([452fad9](https://github.com/ayush-jadaun/bumpcraft/commit/452fad9ac4e96e1f16183b4ec2d31bcef1c4a83f))
+
 ## [1.5.4](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.4) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.3...v1.5.4))
 
 ### 🐛 Bug Fixes
