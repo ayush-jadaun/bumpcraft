@@ -26,9 +26,11 @@ export class PackageJsonSource implements VersionSource {
       const content = await readFile(this.path, 'utf-8')
       const pkg = JSON.parse(content)
       pkg.version = version.toString()
-      // Atomic write: tmp then rename prevents partial-write corruption on crash
+      // Detect original indent to preserve formatting
+      const indentMatch = content.match(/^(\s+)"/m)
+      const indent = indentMatch?.[1] ?? '  '
       const tmp = `${this.path}.tmp`
-      await writeFile(tmp, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+      await writeFile(tmp, JSON.stringify(pkg, null, indent) + '\n', 'utf-8')
       await rename(tmp, this.path)
     } catch (e) {
       throw new BumpcraftError(ErrorCode.CONFIG_ERROR, `Cannot write ${this.path}: ${e}`)

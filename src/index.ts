@@ -335,13 +335,15 @@ export async function runMonorepoRelease(options: ReleaseOptions = {}): Promise<
     const nextVersion = ctx.nextVersion.toString()
 
     if (!options.dryRun) {
-      // Write version to the package's package.json
+      // Write version to the package's package.json (preserve indent)
       try {
         const content = await readFile(pkgJsonPath, 'utf-8')
         const pkg = JSON.parse(content)
         pkg.version = nextVersion
+        const indentMatch = content.match(/^(\s+)"/m)
+        const indent = indentMatch?.[1] ?? '  '
         const tmp = `${pkgJsonPath}.tmp`
-        await writeFile(tmp, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+        await writeFile(tmp, JSON.stringify(pkg, null, indent) + '\n', 'utf-8')
         await rename(tmp, pkgJsonPath)
       } catch (e) {
         logger.warn(`Failed to update ${pkgJsonPath}: ${e}`)
@@ -413,8 +415,10 @@ export async function runMonorepoRelease(options: ReleaseOptions = {}): Promise<
           }
         }
         if (needsBump) {
+          const indentMatch = content.match(/^(\s+)"/m)
+          const indent = indentMatch?.[1] ?? '  '
           const tmp = `${join(dc.path, 'package.json')}.tmp`
-          await writeFile(tmp, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+          await writeFile(tmp, JSON.stringify(pkg, null, indent) + '\n', 'utf-8')
           await rename(tmp, join(dc.path, 'package.json'))
           logger.info(`${depName}: updated dependency versions`)
         }
@@ -445,8 +449,10 @@ export async function runMonorepoRelease(options: ReleaseOptions = {}): Promise<
           const content = await readFile(pkgPath, 'utf-8')
           const pkg = JSON.parse(content)
           pkg.version = highest.toString()
+          const indentMatch = content.match(/^(\s+)"/m)
+          const indent = indentMatch?.[1] ?? '  '
           const tmp = `${pkgPath}.tmp`
-          await writeFile(tmp, JSON.stringify(pkg, null, 2) + '\n', 'utf-8')
+          await writeFile(tmp, JSON.stringify(pkg, null, indent) + '\n', 'utf-8')
           await rename(tmp, pkgPath)
           logger.info(`${r.package}: linked to ${highest.toString()}`)
         } catch { /* */ }
