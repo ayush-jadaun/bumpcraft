@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.5.8](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.8) (2026-03-24) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.7...v1.5.8))
+
+### 🐛 Bug Fixes
+
+- preserve package.json formatting and all fields when bumping version ([6dd6177](https://github.com/ayush-jadaun/bumpcraft/commit/6dd6177e4826d01495c4f6ba3053952956a46481))
+
+### 📚 Documentation
+
+- document auto --access public for scoped packages ([1b7b75b](https://github.com/ayush-jadaun/bumpcraft/commit/1b7b75b5d1c69c7d8b61469aa1ae98f243dbb310))
+
 ## [1.5.7](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.7) (2026-03-24) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.6...v1.5.7))
 
 ### 🐛 Bug Fixes

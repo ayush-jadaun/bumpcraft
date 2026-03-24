@@ -1,5 +1,40 @@
 [
   {
+    "version": "1.5.8",
+    "previousVersion": "1.5.7",
+    "date": "2026-03-24T09:23:38.964Z",
+    "commits": [
+      {
+        "hash": "6dd6177e4826d01495c4f6ba3053952956a46481",
+        "type": "fix",
+        "scope": null,
+        "subject": "preserve package.json formatting and all fields when bumping version",
+        "body": "Bumpcraft now detects the original indentation (2 spaces, 4 spaces,\ntabs) and uses it when writing back. All fields including publishConfig,\nrepository, scripts, etc. are preserved — only the version field changes.\n\nFixed in all 4 write paths: PackageJsonSource.write, monorepo version\nbump, inter-package dep updater, and linked package sync.",
+        "breaking": false,
+        "raw": "6dd6177e4826d01495c4f6ba3053952956a46481 fix: preserve package.json formatting and all fields when bumping version\nBumpcraft now detects the original indentation (2 spaces, 4 spaces,\ntabs) and uses it when writing back. All fields including publishConfig,\nrepository, scripts, etc. are preserved — only the version field changes.\n\nFixed in all 4 write paths: PackageJsonSource.write, monorepo version\nbump, inter-package dep updater, and linked package sync."
+      },
+      {
+        "hash": "1b7b75b5d1c69c7d8b61469aa1ae98f243dbb310",
+        "type": "docs",
+        "scope": null,
+        "subject": "document auto --access public for scoped packages",
+        "body": null,
+        "breaking": false,
+        "raw": "1b7b75b5d1c69c7d8b61469aa1ae98f243dbb310 docs: document auto --access public for scoped packages"
+      },
+      {
+        "hash": "83e184de1eea8ee75e6be93ae8232ac32593107c",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.5.7 [skip ci]",
+        "body": null,
+        "breaking": false,
+        "raw": "83e184de1eea8ee75e6be93ae8232ac32593107c chore(release): 1.5.7 [skip ci]"
+      }
+    ],
+    "changelogOutput": "## [1.5.8](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.8) (2026-03-24) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.7...v1.5.8))\n\n### 🐛 Bug Fixes\n\n- preserve package.json formatting and all fields when bumping version ([6dd6177](https://github.com/ayush-jadaun/bumpcraft/commit/6dd6177e4826d01495c4f6ba3053952956a46481))\n\n### 📚 Documentation\n\n- document auto --access public for scoped packages ([1b7b75b](https://github.com/ayush-jadaun/bumpcraft/commit/1b7b75b5d1c69c7d8b61469aa1ae98f243dbb310))\n"
+  },
+  {
     "version": "1.5.7",
     "previousVersion": "1.5.6",
     "date": "2026-03-24T08:56:25.385Z",
