@@ -43,7 +43,7 @@
     "cd"
   ],
   "author": "Ayush Jadaun",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ayush-jadaun/bumpcraft.git"
