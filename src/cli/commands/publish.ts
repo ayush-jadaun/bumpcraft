@@ -70,6 +70,8 @@ export function registerPublish(program: Command) {
 
         for (const target of targets) {
           const args = ['npm', 'publish']
+          // Scoped packages (@org/name) default to private on npm — auto-add --access public
+          if (target.name.startsWith('@')) args.push('--access', 'public')
           if (opts.provenance) args.push('--provenance')
           if (opts.tag) args.push('--tag', opts.tag)
           if (opts.dryRun) args.push('--dry-run')
