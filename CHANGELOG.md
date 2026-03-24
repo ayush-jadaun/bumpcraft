@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.7](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.7) (2026-03-24) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.6...v1.5.7))
+
+### 🐛 Bug Fixes
+
+- auto-add --access public for scoped packages on npm publish ([0e13cba](https://github.com/ayush-jadaun/bumpcraft/commit/0e13cba453362149b0a4289eb50de2a44fc5bf0d))
+
 ## [1.5.6](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.6) (2026-03-23) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.5...v1.5.6))
 
 ### 🐛 Bug Fixes

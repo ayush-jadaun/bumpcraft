@@ -1,5 +1,40 @@
 [
   {
+    "version": "1.5.7",
+    "previousVersion": "1.5.6",
+    "date": "2026-03-24T08:56:25.385Z",
+    "commits": [
+      {
+        "hash": "0e13cba453362149b0a4289eb50de2a44fc5bf0d",
+        "type": "fix",
+        "scope": null,
+        "subject": "auto-add --access public for scoped packages on npm publish",
+        "body": "Scoped packages (@org/name) default to private on npm and require\n--access public on first publish. Bumpcraft now detects the @ prefix\nand adds the flag automatically.",
+        "breaking": false,
+        "raw": "0e13cba453362149b0a4289eb50de2a44fc5bf0d fix: auto-add --access public for scoped packages on npm publish\nScoped packages (@org/name) default to private on npm and require\n--access public on first publish. Bumpcraft now detects the @ prefix\nand adds the flag automatically."
+      },
+      {
+        "hash": "c3bd35bb50b30ea871b1f78abae0d87b0d7e79f7",
+        "type": "chore",
+        "scope": null,
+        "subject": "change license from MIT to Apache-2.0",
+        "body": null,
+        "breaking": false,
+        "raw": "c3bd35bb50b30ea871b1f78abae0d87b0d7e79f7 chore: change license from MIT to Apache-2.0"
+      },
+      {
+        "hash": "57dc72d7f09991f30bca43c8b983d8ebdb9d8463",
+        "type": "chore",
+        "scope": "release",
+        "subject": "1.5.6 [skip ci]",
+        "body": null,
+        "breaking": false,
+        "raw": "57dc72d7f09991f30bca43c8b983d8ebdb9d8463 chore(release): 1.5.6 [skip ci]"
+      }
+    ],
+    "changelogOutput": "## [1.5.7](https://github.com/ayush-jadaun/bumpcraft/releases/tag/v1.5.7) (2026-03-24) ([compare](https://github.com/ayush-jadaun/bumpcraft/compare/v1.5.6...v1.5.7))\n\n### 🐛 Bug Fixes\n\n- auto-add --access public for scoped packages on npm publish ([0e13cba](https://github.com/ayush-jadaun/bumpcraft/commit/0e13cba453362149b0a4289eb50de2a44fc5bf0d))\n"
+  },
+  {
     "version": "1.5.6",
     "previousVersion": "1.5.5",
     "date": "2026-03-23T21:07:27.365Z",
