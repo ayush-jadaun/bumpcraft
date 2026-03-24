@@ -242,6 +242,7 @@ bumpcraft publish [options]
 | `--dry-run` | Preview without publishing |
 | `--otp <code>` | One-time password for npm 2FA |
 
+Scoped packages (`@org/name`) are published with `--access public` automatically.
 Private packages (`"private": true`) are automatically skipped.
 
 See [Publishing](publishing.md) for details.

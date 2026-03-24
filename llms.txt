@@ -148,7 +148,7 @@ docs: update readme        → no bump
 | `bumpcraft plugins list` | List configured plugins |
 | `bumpcraft init` | Create config file |
 | `bumpcraft init-release --tag-version 1.0.0` | Tag current commit as baseline (for adopting bumpcraft) |
-| `bumpcraft publish` | Publish to npm (skips private packages) |
+| `bumpcraft publish` | Publish to npm (auto --access public for @scoped, skips private) |
 | `bumpcraft publish --provenance` | Publish with npm provenance attestation |
 | `bumpcraft publish --package auth` | Publish a specific monorepo package |
 | `bumpcraft status` | Show pending changes per package |

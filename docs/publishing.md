@@ -31,6 +31,10 @@ bumpcraft publish
 bumpcraft publish --package auth
 ```
 
+### Scoped packages
+
+Scoped packages (`@org/name`) are automatically published with `--access public`. No need to add `publishConfig` to each package.json — bumpcraft handles it.
+
 ### Private packages
 
 Packages with `"private": true` in `package.json` are **automatically skipped**:
